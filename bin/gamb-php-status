@@ -32,6 +32,8 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+gamb_php_ensure_dirs
+
 print_row_status() {
   local row="$1"
   local slug path type host port docroot index pid
@@ -58,4 +60,3 @@ row="$(gamb_php_find_registered_row_for_cwd "$(gamb_php_current_dir)")" || {
   exit 1
 }
 print_row_status "$row"
-

@@ -38,4 +38,5 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+gamb_php_ensure_dirs
 gamb_php_start_registered_project "$(gamb_php_current_dir)" "$port" "$foreground" 0

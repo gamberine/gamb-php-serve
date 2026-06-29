@@ -26,6 +26,8 @@ case "${1:-}" in
     ;;
 esac
 
+gamb_php_ensure_dirs
+
 cwd="$(gamb_php_current_dir)"
 printf 'Pasta atual: %s\n' "$cwd"
 
@@ -81,4 +83,3 @@ EOF
 else
   printf '%s\n' 'Projeto registrado: não'
 fi
-

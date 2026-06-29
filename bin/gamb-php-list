@@ -26,6 +26,7 @@ case "${1:-}" in
     ;;
 esac
 
+gamb_php_ensure_dirs
 printf 'Slug\tCaminho\tTipo\tPorta\tStatus\tURL\n'
 if [ -f "$gamb_php_projects_file" ]; then
   while IFS=$'\t' read -r slug path type host port docroot index; do
@@ -37,4 +38,3 @@ if [ -f "$gamb_php_projects_file" ]; then
     printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$slug" "$path" "$type" "$port" "$status" "$(gamb_php_command_url "$host" "$port")"
   done < "$gamb_php_projects_file"
 fi
-

@@ -32,6 +32,8 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+gamb_php_ensure_dirs
+
 row="$(gamb_php_find_registered_row_for_cwd "$(gamb_php_current_dir)")" || {
   printf '%s\n' 'Projeto não registrado nesta pasta.' >&2
   exit 1
@@ -50,4 +52,3 @@ if [ "$with_logs" -eq 1 ]; then
 fi
 
 gamb_php_registry_remove_path "$path" >/dev/null 2>&1 || true
-
