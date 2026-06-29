@@ -11,12 +11,17 @@ fi
 dest_bin_dir="$HOME/.local/bin"
 dest_config_dir="$HOME/.config/gamb-php"
 dest_lib_dir="$dest_config_dir/lib"
+dest_share_dir="$dest_config_dir/share"
+dest_dashboard_dir="$dest_share_dir/dashboard"
+dest_assets_dir="$dest_share_dir/assets"
 dest_state_dir="$HOME/.local/state/gamb-php"
 dest_pids_dir="$dest_state_dir/pids"
 dest_logs_dir="$dest_state_dir/logs"
 dest_routers_dir="$dest_state_dir/routers"
 projects_file="$dest_config_dir/projects.tsv"
+projects_meta_file="$dest_config_dir/projects-meta.tsv"
 bashrc_file="$HOME/.bashrc"
+bash_profile_file=""
 
 files_bin=(
   "bin/gamb-php-serve"
@@ -32,8 +37,23 @@ files_lib=(
   "lib/gamb-php-common.sh"
 )
 
+files_share=(
+  "share/dashboard/index.php"
+  "docs/assets/dashboard.css"
+  "docs/assets/dashboard.js"
+  "docs/assets/hero-illustration.png"
+)
+
 ensure_dirs() {
-  mkdir -p "$dest_bin_dir" "$dest_config_dir" "$dest_lib_dir" "$dest_pids_dir" "$dest_logs_dir" "$dest_routers_dir"
+  mkdir -p \
+    "$dest_bin_dir" \
+    "$dest_config_dir" \
+    "$dest_lib_dir" \
+    "$dest_dashboard_dir" \
+    "$dest_assets_dir" \
+    "$dest_pids_dir" \
+    "$dest_logs_dir" \
+    "$dest_routers_dir"
 }
 
 copy_local_or_remote() {
@@ -62,6 +82,19 @@ copy_local_or_remote() {
 
   printf '%s\n' 'curl ou wget não encontrado para baixar os arquivos.' >&2
   exit 1
+}
+
+resolve_login_profile_file() {
+  local candidate=""
+
+  for candidate in "$HOME/.bash_profile" "$HOME/.bash_login" "$HOME/.profile"; do
+    if [ -f "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  printf '%s\n' "$HOME/.bash_profile"
 }
 
 append_block_if_missing() {
@@ -104,8 +137,17 @@ esac'
   append_block_if_missing "$bashrc_file" "$marker_start" "$marker_end" "$content"
 }
 
+ensure_login_profile_sources_bashrc() {
+  local marker_start="# >>> gamb-php-serve LOGIN PROFILE >>>"
+  local marker_end="# <<< gamb-php-serve LOGIN PROFILE <<<"
+  local content='[ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"'
+  touch "$bash_profile_file"
+  append_block_if_missing "$bash_profile_file" "$marker_start" "$marker_end" "$content"
+}
+
 main() {
   ensure_dirs
+  bash_profile_file="$(resolve_login_profile_file)"
 
   for rel_path in "${files_bin[@]}"; do
     copy_local_or_remote "$rel_path" "$dest_bin_dir/$(basename "$rel_path")"
@@ -115,12 +157,25 @@ main() {
     copy_local_or_remote "$rel_path" "$dest_lib_dir/$(basename "$rel_path")"
   done
 
+  for rel_path in "${files_share[@]}"; do
+    case "$rel_path" in
+      share/dashboard/*)
+        copy_local_or_remote "$rel_path" "$dest_dashboard_dir/$(basename "$rel_path")"
+        ;;
+      docs/assets/*)
+        copy_local_or_remote "$rel_path" "$dest_assets_dir/$(basename "$rel_path")"
+        ;;
+    esac
+  done
+
   chmod +x "$dest_bin_dir"/gamb-php-*
   chmod +x "$dest_lib_dir"/gamb-php-common.sh
 
   [ -f "$projects_file" ] || : > "$projects_file"
+  [ -f "$projects_meta_file" ] || : > "$projects_meta_file"
   ensure_bashrc_path
   ensure_bashrc_hook
+  ensure_login_profile_sources_bashrc
 
   cat <<EOF
 Instalação concluída.

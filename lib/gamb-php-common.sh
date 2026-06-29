@@ -4,7 +4,11 @@ gamb_php_config_dir="${GAMB_PHP_CONFIG_DIR:-$HOME/.config/gamb-php}"
 gamb_php_state_dir="${GAMB_PHP_STATE_DIR:-$HOME/.local/state/gamb-php}"
 gamb_php_bin_dir="${GAMB_PHP_BIN_DIR:-$HOME/.local/bin}"
 gamb_php_projects_file="${GAMB_PHP_PROJECTS_FILE:-$gamb_php_config_dir/projects.tsv}"
+gamb_php_projects_meta_file="${GAMB_PHP_PROJECTS_META_FILE:-$gamb_php_config_dir/projects-meta.tsv}"
 gamb_php_lib_install_dir="${GAMB_PHP_LIB_INSTALL_DIR:-$gamb_php_config_dir/lib}"
+gamb_php_share_dir="${GAMB_PHP_SHARE_DIR:-$gamb_php_config_dir/share}"
+gamb_php_dashboard_dir="${GAMB_PHP_DASHBOARD_DIR:-$gamb_php_share_dir/dashboard}"
+gamb_php_assets_dir="${GAMB_PHP_ASSETS_DIR:-$gamb_php_share_dir/assets}"
 gamb_php_pids_dir="$gamb_php_state_dir/pids"
 gamb_php_logs_dir="$gamb_php_state_dir/logs"
 gamb_php_routers_dir="$gamb_php_state_dir/routers"
@@ -14,6 +18,8 @@ gamb_php_ensure_dirs() {
     "$gamb_php_bin_dir" \
     "$gamb_php_config_dir" \
     "$gamb_php_lib_install_dir" \
+    "$gamb_php_dashboard_dir" \
+    "$gamb_php_assets_dir" \
     "$gamb_php_pids_dir" \
     "$gamb_php_logs_dir" \
     "$gamb_php_routers_dir"
@@ -68,20 +74,20 @@ gamb_php_log_file_for_slug() {
 gamb_php_path_for_php_runtime() {
   local path="${1:-}"
   local php_bin="${2:-}"
+  local php_family=""
 
   if [ -z "$path" ]; then
     printf '%s\n' ""
     return 0
   fi
 
-  case "$php_bin" in
-    *.exe|*.EXE)
-      if command -v cygpath >/dev/null 2>&1; then
-        cygpath -m "$path" 2>/dev/null || printf '%s\n' "$path"
-        return 0
-      fi
-      ;;
-  esac
+  if [ -n "$php_bin" ]; then
+    php_family="$("$php_bin" -r 'echo PHP_OS_FAMILY;' 2>/dev/null || true)"
+    if [ "$php_family" = "Windows" ] && command -v cygpath >/dev/null 2>&1; then
+      cygpath -m "$path" 2>/dev/null || printf '%s\n' "$path"
+      return 0
+    fi
+  fi
 
   printf '%s\n' "$path"
 }
@@ -227,6 +233,60 @@ gamb_php_read_registry_rows() {
   cat "$gamb_php_projects_file"
 }
 
+gamb_php_read_meta_rows() {
+  if [ ! -f "$gamb_php_projects_meta_file" ]; then
+    return 0
+  fi
+
+  cat "$gamb_php_projects_meta_file"
+}
+
+gamb_php_touch_project_last_used() {
+  local path="${1:-}"
+  local tmp_file="${gamb_php_projects_meta_file}.tmp.$$"
+  local now=""
+  local row_path row_timestamp
+
+  [ -n "$path" ] || return 1
+  mkdir -p "$gamb_php_config_dir"
+  now="$(date +%s 2>/dev/null || true)"
+  [ -n "$now" ] || now="0"
+
+  : > "$tmp_file"
+  if [ -f "$gamb_php_projects_meta_file" ]; then
+    while IFS=$'\t' read -r row_path row_timestamp; do
+      [ -z "${row_path:-}" ] && continue
+      if [ "$row_path" = "$path" ]; then
+        continue
+      fi
+      printf '%s\t%s\n' "$row_path" "$row_timestamp" >> "$tmp_file"
+    done < "$gamb_php_projects_meta_file"
+  fi
+
+  printf '%s\t%s\n' "$path" "$now" >> "$tmp_file"
+  mv "$tmp_file" "$gamb_php_projects_meta_file"
+}
+
+gamb_php_remove_project_meta() {
+  local path="${1:-}"
+  local tmp_file="${gamb_php_projects_meta_file}.tmp.$$"
+  local row_path row_timestamp
+
+  [ -n "$path" ] || return 1
+  [ -f "$gamb_php_projects_meta_file" ] || return 0
+
+  : > "$tmp_file"
+  while IFS=$'\t' read -r row_path row_timestamp; do
+    [ -z "${row_path:-}" ] && continue
+    if [ "$row_path" = "$path" ]; then
+      continue
+    fi
+    printf '%s\t%s\n' "$row_path" "$row_timestamp" >> "$tmp_file"
+  done < "$gamb_php_projects_meta_file"
+
+  mv "$tmp_file" "$gamb_php_projects_meta_file"
+}
+
 gamb_php_find_registered_rows_for_cwd() {
   local cwd="${1:-$(gamb_php_current_dir)}"
   local best_path=""
@@ -359,6 +419,7 @@ gamb_php_registry_remove_path() {
   done < "$gamb_php_projects_file"
 
   mv "$tmp_file" "$gamb_php_projects_file"
+  gamb_php_remove_project_meta "$path" >/dev/null 2>&1 || true
   return "$removed"
 }
 
@@ -407,16 +468,33 @@ gamb_php_write_router() {
   local index="$4"
   local php_bin="${5:-}"
   local base_path="${6:-}"
+  local slug="${7:-}"
+  local host="${8:-127.0.0.1}"
+  local port="${9:-8000}"
   local runtime_root=""
   local runtime_docroot=""
   local runtime_index=""
   local runtime_base_path=""
+  local runtime_dashboard_entry=""
+  local runtime_assets_dir=""
+  local runtime_config_dir=""
+  local runtime_state_dir=""
+  local runtime_bin_dir=""
+  local runtime_project_url=""
+  local runtime_dashboard_url=""
   local live_reload_enabled="true"
 
   runtime_root="$(gamb_php_path_for_php_runtime "$root" "$php_bin")"
   runtime_docroot="$(gamb_php_path_for_php_runtime "$docroot" "$php_bin")"
   runtime_index="$(gamb_php_path_for_php_runtime "$index" "$php_bin")"
   runtime_base_path="$(gamb_php_normalize_base_path "$base_path")"
+  runtime_dashboard_entry="$(gamb_php_path_for_php_runtime "$gamb_php_dashboard_dir/index.php" "$php_bin")"
+  runtime_assets_dir="$(gamb_php_path_for_php_runtime "$gamb_php_assets_dir" "$php_bin")"
+  runtime_config_dir="$(gamb_php_path_for_php_runtime "$gamb_php_config_dir" "$php_bin")"
+  runtime_state_dir="$(gamb_php_path_for_php_runtime "$gamb_php_state_dir" "$php_bin")"
+  runtime_bin_dir="$(gamb_php_path_for_php_runtime "$gamb_php_bin_dir" "$php_bin")"
+  runtime_project_url="$(gamb_php_command_url "$host" "$port" "$base_path")"
+  runtime_dashboard_url="$(gamb_php_dashboard_url "$host" "$port" "$base_path")"
 
   if [ "${GAMB_PHP_NO_LIVE_RELOAD:-0}" = "1" ]; then
     live_reload_enabled="false"
@@ -429,9 +507,20 @@ gamb_php_write_router() {
 \$docroot = "${runtime_docroot}";
 \$index = "${runtime_index}";
 \$basePath = "${runtime_base_path}";
+\$projectSlug = "${slug}";
+\$projectHost = "${host}";
+\$projectPort = "${port}";
+\$dashboardEntry = "${runtime_dashboard_entry}";
+\$dashboardAssetsDir = "${runtime_assets_dir}";
+\$dashboardConfigDir = "${runtime_config_dir}";
+\$dashboardStateDir = "${runtime_state_dir}";
+\$dashboardBinDir = "${runtime_bin_dir}";
+\$projectUrl = "${runtime_project_url}";
+\$dashboardUrl = "${runtime_dashboard_url}";
 \$liveReloadEnabled = ${live_reload_enabled};
 \$reloadStatusPath = (\$basePath !== "" ? \$basePath : "") . "/__gamb_php__/reload";
 \$reloadScriptPath = (\$basePath !== "" ? \$basePath : "") . "/__gamb_php__/reload.js";
+\$dashboardBasePath = (\$basePath !== "" ? \$basePath : "") . "/__gamb_php__/hub";
 
 function gambPhpResponseContentType(): string
 {
@@ -743,6 +832,48 @@ function gambPhpExecutePhpFile(string \$targetFile, string \$uri, string \$docro
     }
 }
 
+function gambPhpServeDashboard(
+    string \$dashboardEntry,
+    string \$dashboardBasePath,
+    string \$uri,
+    string \$projectRoot,
+    string \$projectSlug,
+    string \$projectHost,
+    string \$projectPort,
+    string \$projectUrl,
+    string \$dashboardUrl,
+    string \$assetsDir,
+    string \$configDir,
+    string \$stateDir,
+    string \$binDir
+): bool {
+    if (\$dashboardEntry === "" || !is_file(\$dashboardEntry)) {
+        return false;
+    }
+
+    if (\$uri !== \$dashboardBasePath && strpos(\$uri, \$dashboardBasePath . "/") !== 0) {
+        return false;
+    }
+
+    \$GLOBALS["gambPhpDashboardContext"] = [
+        "dashboardBasePath" => \$dashboardBasePath,
+        "requestUri" => \$uri,
+        "projectRoot" => \$projectRoot,
+        "projectSlug" => \$projectSlug,
+        "projectHost" => \$projectHost,
+        "projectPort" => \$projectPort,
+        "projectUrl" => \$projectUrl,
+        "dashboardUrl" => \$dashboardUrl,
+        "assetsDir" => \$assetsDir,
+        "configDir" => \$configDir,
+        "stateDir" => \$stateDir,
+        "binDir" => \$binDir,
+    ];
+
+    require \$dashboardEntry;
+    return true;
+}
+
 if (\$liveReloadEnabled && \$uri === \$reloadStatusPath) {
     gambPhpServeReloadStatus(\$projectRoot);
     return true;
@@ -750,6 +881,24 @@ if (\$liveReloadEnabled && \$uri === \$reloadStatusPath) {
 
 if (\$liveReloadEnabled && \$uri === \$reloadScriptPath) {
     gambPhpServeReloadScript(\$reloadStatusPath);
+    return true;
+}
+
+if (gambPhpServeDashboard(
+    \$dashboardEntry,
+    \$dashboardBasePath,
+    \$uri,
+    \$projectRoot,
+    \$projectSlug,
+    \$projectHost,
+    \$projectPort,
+    \$projectUrl,
+    \$dashboardUrl,
+    \$dashboardAssetsDir,
+    \$dashboardConfigDir,
+    \$dashboardStateDir,
+    \$dashboardBinDir
+)) {
     return true;
 }
 
@@ -811,6 +960,15 @@ gamb_php_command_url() {
   local base_path="${3:-}"
   base_path="$(gamb_php_normalize_base_path "$base_path")"
   printf 'http://%s:%s%s\n' "$(gamb_php_display_host "$host")" "$port" "$base_path"
+}
+
+gamb_php_dashboard_url() {
+  local host="$1"
+  local port="$2"
+  local base_path="${3:-}"
+  local normalized=""
+  normalized="$(gamb_php_normalize_base_path "$base_path")"
+  printf '%s/__gamb_php__/hub\n' "$(gamb_php_command_url "$host" "$port" "$normalized")"
 }
 
 gamb_php_open_browser() {
@@ -1045,7 +1203,7 @@ gamb_php_start_background_server() {
     pid="$!"
     cd "$oldpwd"
   else
-    gamb_php_write_router "$router_file" "$root" "$docroot" "$index" "$php_bin" "$base_path"
+    gamb_php_write_router "$router_file" "$root" "$docroot" "$index" "$php_bin" "$base_path" "$slug" "$host" "$port"
     if command -v nohup >/dev/null 2>&1; then
       nohup "$php_bin" -S "$host:$port" -t "$docroot" "$router_file" > "$log_file" 2>&1 &
     else
@@ -1073,7 +1231,7 @@ gamb_php_start_foreground_server() {
     exec "$php_bin" artisan serve --host="$host" --port="$port"
   fi
 
-  gamb_php_write_router "$router_file" "$root" "$docroot" "$index" "$php_bin" "$base_path"
+  gamb_php_write_router "$router_file" "$root" "$docroot" "$index" "$php_bin" "$base_path" "$(gamb_php_slug_for_instance "$(gamb_php_slug_from_path "$root")" "$port")" "$host" "$port"
   exec "$php_bin" -S "$host:$port" -t "$docroot" "$router_file"
 }
 
@@ -1097,6 +1255,7 @@ gamb_php_format_row() {
   printf 'Host: %s\n' "$(gamb_php_display_host "$host")"
   printf 'Porta: %s\n' "$port"
   printf 'URL: %s\n' "$url"
+  printf 'Painel: %s\n' "$(gamb_php_dashboard_url "$host" "$port" "$base_path")"
   if [ -n "$pid" ]; then
     printf 'PID: %s\n' "$pid"
     printf 'Rodando: sim\n'
@@ -1135,6 +1294,7 @@ gamb_php_start_registered_project() {
   local existing_row=""
   local base_slug=""
   local url=""
+  local dashboard_url=""
   local base_path=""
 
   if ! php_bin="$(gamb_php_detect_php)"; then
@@ -1158,10 +1318,14 @@ gamb_php_start_registered_project() {
       if [ -n "$existing_row" ]; then
         IFS=$'\t' read -r slug root type host port docroot index <<<"$existing_row"
         if pid="$(gamb_php_running_state_for_row "$slug" 2>/dev/null)" && [ -n "$pid" ]; then
-          url="$(gamb_php_command_url "$host" "$port" "$(gamb_php_detect_base_path "$root")")"
+          base_path="$(gamb_php_detect_base_path "$root")"
+          url="$(gamb_php_command_url "$host" "$port" "$base_path")"
+          dashboard_url="$(gamb_php_dashboard_url "$host" "$port" "$base_path")"
+          gamb_php_touch_project_last_used "$root" >/dev/null 2>&1 || true
           if [ "$quiet" -eq 0 ]; then
             printf 'Projeto jÃ¡ estÃ¡ rodando em %s\n' "$url"
-            gamb_php_open_browser "$url" || true
+            printf 'Painel: %s\n' "$dashboard_url"
+            gamb_php_open_browser "$dashboard_url" || true
           fi
           return 0
         fi
@@ -1173,10 +1337,14 @@ gamb_php_start_registered_project() {
         [ -z "$row" ] && continue
         IFS=$'\t' read -r slug root type host port docroot index <<<"$row"
         if pid="$(gamb_php_running_state_for_row "$slug" 2>/dev/null)" && [ -n "$pid" ]; then
-          url="$(gamb_php_command_url "$host" "$port" "$(gamb_php_detect_base_path "$root")")"
+          base_path="$(gamb_php_detect_base_path "$root")"
+          url="$(gamb_php_command_url "$host" "$port" "$base_path")"
+          dashboard_url="$(gamb_php_dashboard_url "$host" "$port" "$base_path")"
+          gamb_php_touch_project_last_used "$root" >/dev/null 2>&1 || true
           if [ "$quiet" -eq 0 ]; then
             printf 'Projeto jÃ¡ estÃ¡ rodando em %s\n' "$url"
-            gamb_php_open_browser "$url" || true
+            printf 'Painel: %s\n' "$dashboard_url"
+            gamb_php_open_browser "$dashboard_url" || true
           fi
           return 0
         fi
@@ -1234,13 +1402,16 @@ EOF
   log_file="$(gamb_php_log_file_for_row "$slug")"
   router_file="$(gamb_php_router_file_for_row "$slug")"
   url="$(gamb_php_command_url "$host" "$port" "$base_path")"
+  dashboard_url="$(gamb_php_dashboard_url "$host" "$port" "$base_path")"
   gamb_php_registry_upsert_row "$slug" "$root" "$type" "$host" "$port" "$docroot" "$index"
+  gamb_php_touch_project_last_used "$root" >/dev/null 2>&1 || true
 
   if [ "$foreground" -eq 1 ]; then
     if [ "$quiet" -eq 0 ]; then
       printf 'Projeto registrado em %s\n' "$root"
       printf 'URL: %s\n' "$url"
-      gamb_php_open_browser_deferred "$url" 1 || true
+      printf 'Painel: %s\n' "$dashboard_url"
+      gamb_php_open_browser_deferred "$dashboard_url" 1 || true
     fi
     gamb_php_start_foreground_server "$php_bin" "$type" "$host" "$port" "$root" "$docroot" "$index" "$router_file" "$base_path"
   fi
@@ -1251,8 +1422,9 @@ EOF
   if [ "$quiet" -eq 0 ]; then
     printf 'Projeto registrado em %s\n' "$root"
     printf 'URL: %s\n' "$url"
+    printf 'Painel: %s\n' "$dashboard_url"
     printf 'PID: %s\n' "$pid"
-    gamb_php_open_browser_deferred "$url" 1 || true
+    gamb_php_open_browser_deferred "$dashboard_url" 1 || true
   fi
 }
 

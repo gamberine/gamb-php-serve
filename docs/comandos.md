@@ -10,6 +10,8 @@ gamb-php-serve --port 8080
 gamb-php-serve --foreground
 ```
 
+Ao iniciar manualmente, abre o hub visual do servico em `localhost`.
+
 ## `gamb-php-auto`
 
 Executado automaticamente pelo `~/.bashrc` para iniciar projetos registrados ao entrar na pasta.
@@ -57,3 +59,17 @@ Mostra informações do ambiente atual.
 gamb-php-check
 ```
 
+## Hub visual
+
+Rota reservada do painel:
+
+```text
+/__gamb_php__/hub
+```
+
+O hub traz:
+
+- 4 projetos recentes em destaque.
+- lista lateral com os demais projetos registrados.
+- comandos preparados para CMD, PowerShell e Bash.
+- copia imediata de comandos e ponte preparada para terminal do VS Code.

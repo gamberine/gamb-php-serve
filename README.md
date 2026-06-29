@@ -6,6 +6,7 @@ Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAM
 
 - Registra projetos PHP no seu usuário.
 - Sobe servidor local usando o PHP built-in server ou `php artisan serve`.
+- Abre um hub visual em `localhost` com projetos recentes, lista lateral e acoes rapidas.
 - Abre a URL no navegador padrao quando `gamb-php-serve` e executado manualmente.
 - Recarrega a pagina automaticamente ao salvar arquivos do projeto enquanto o servidor estiver rodando.
 - Auto-inicia ao entrar novamente na pasta de um projeto registrado.
@@ -41,6 +42,14 @@ cd /d/ProjetosGit/meu-projeto
 gamb-php-serve
 ```
 
+Depois do start manual, o navegador abre o painel do servico em:
+
+```text
+http://localhost:PORTA/__gamb_php__/hub
+```
+
+A URL principal do projeto continua impressa no terminal e disponivel no primeiro card do painel.
+
 ## Depois de implantado
 
 Ao entrar novamente na pasta do projeto pelo Git Bash, o servidor sobe automaticamente se o projeto já estiver registrado.
@@ -75,6 +84,18 @@ Para rodar o mesmo projeto em outra janela do VS Code, basta informar outra port
 gamb-php-serve --port 8081
 ```
 
+## Dashboard local
+
+- Grid com os 4 projetos mais recentes.
+- Lista lateral rolavel com os demais projetos implantados.
+- Cards com nome, logo/favicon quando existir, URL e status.
+- Acoes rapidas com comandos preparados para CMD, PowerShell e Bash.
+- Ponte de VS Code pronta para uma extensao complementar futura, com copia de comando como fallback imediato.
+
+## GitHub Pages
+
+O repositorio agora inclui uma landing em `docs/index.html` e o workflow `.github/workflows/pages.yml` para publicar a apresentacao do `gamb-php-serve` usando a mesma linguagem visual do painel local.
+
 ## Diretórios usados
 
 - `~/.local/bin`
@@ -102,6 +123,10 @@ Para desativar o live reload automatico ao salvar:
 ```bash
 export GAMB_PHP_NO_LIVE_RELOAD=1
 ```
+
+## Portfolio de solucoes
+
+O hub local e a GitHub Pages ja incluem um bloco dinamico preparado para buscar dados do repositorio `gamb-portfolio-solucoes`. Se o feed ainda nao existir, entram cards de fallback.
 
 ## Como parar
 

@@ -33,6 +33,19 @@ bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/gamberine/gamb-php-serve@main/
 - Cria `~/.local/state/gamb-php/pids`.
 - Cria `~/.local/state/gamb-php/logs`.
 - Cria `~/.local/state/gamb-php/routers`.
+- Cria `~/.config/gamb-php/share/dashboard`.
+- Cria `~/.config/gamb-php/share/assets`.
 - Copia os scripts globais.
+- Copia o hub local e os assets visuais.
 - Adiciona `~/.local/bin` no `~/.bashrc`.
 - Adiciona o hook de auto-start no `~/.bashrc`.
+
+## Depois da instalacao
+
+Ao iniciar um projeto com `gamb-php-serve`, o navegador passa a abrir o painel em:
+
+```text
+http://localhost:PORTA/__gamb_php__/hub
+```
+
+A URL principal do projeto continua sendo impressa no terminal e fica acessivel no primeiro card do painel.

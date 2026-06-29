@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>gamb-php-serve</title>
+    <meta
+      name="description"
+      content="Dashboard local e apresentacao do gamb-php-serve para gerenciar projetos PHP com Bash, PHP built-in server e fluxo moderno para o dia a dia."
+    >
+    <link rel="stylesheet" href="./assets/dashboard.css">
+  </head>
+  <body>
+    <script>
+      window.gambPhpPageData = {
+        mode: "static",
+        repoUrl: "https://github.com/gamberine/gamb-php-serve",
+        pagesUrl: "https://gamberine.github.io/gamb-php-serve/",
+        dashboardUrl: "#dashboard-preview",
+        projectUrl: "https://github.com/gamberine/gamb-php-serve",
+        heroIllustration: "./assets/hero-illustration.png",
+        docsLinks: {
+          install: "./instalacao.md",
+          commands: "./comandos.md",
+          funcionamento: "./funcionamento.md",
+          exemplos: "./exemplos.md"
+        },
+        portfolioSources: [
+          "https://gamberine.github.io/gamb-portfolio-solucoes/portfolio.json",
+          "https://raw.githubusercontent.com/gamberine/gamb-portfolio-solucoes/main/portfolio.json",
+          "https://raw.githubusercontent.com/gamberine/gamb-portfolio-solucoes/main/data/portfolio.json"
+        ],
+        portfolioFallback: [
+          {
+            name: "gamb-php-serve",
+            description: "Repositorio principal com dashboard local, comandos globais e instalacao em uma linha.",
+            url: "https://github.com/gamberine/gamb-php-serve",
+            tags: ["bash", "php", "cli"],
+            stars: 0,
+            downloads: 0
+          },
+          {
+            name: "Starter Pack",
+            description: "Modelos e exemplos para acelerar novas automacoes e kits de produtividade.",
+            url: "https://github.com/gamberine/gamb-php-serve/tree/main/docs",
+            tags: ["templates", "workflow"],
+            stars: 0,
+            downloads: 0
+          },
+          {
+            name: "Documentacao",
+            description: "Instalacao, comandos, funcionamento interno e exemplos de uso rapido.",
+            url: "./comandos.md",
+            tags: ["docs"],
+            stars: 0,
+            downloads: 0
+          }
+        ],
+        sampleProjects: [
+          {
+            name: "Extranet",
+            slug: "extranet",
+            path: "/d/laragon/www/extranet",
+            type: "php_root",
+            port: "8001",
+            url: "http://localhost:8001",
+            running: true,
+            isCurrent: true,
+            monogram: "E",
+            recentLabel: "Hoje, 09:12",
+            instancesCount: 1
+          },
+          {
+            name: "Portal RH",
+            slug: "portal-rh",
+            path: "/d/ProjetosGit/portal-rh",
+            type: "php_public",
+            port: "8082",
+            url: "http://localhost:8082",
+            running: true,
+            monogram: "R",
+            recentLabel: "Ontem, 16:48",
+            instancesCount: 1
+          },
+          {
+            name: "Loja WP",
+            slug: "loja-wp",
+            path: "/d/ProjetosGit/loja-wp",
+            type: "wordpress",
+            port: "8083",
+            url: "http://localhost:8083",
+            running: true,
+            monogram: "W",
+            recentLabel: "Ontem, 11:03",
+            instancesCount: 1
+          },
+          {
+            name: "API Interna",
+            slug: "api-interna",
+            path: "/d/ProjetosGit/api-interna",
+            type: "php_public",
+            port: "8084",
+            url: "http://localhost:8084",
+            running: false,
+            monogram: "A",
+            recentLabel: "12/05/2025, 14:22",
+            instancesCount: 2
+          },
+          {
+            name: "Blog Pessoal",
+            slug: "blog",
+            path: "/d/ProjetosGit/blog",
+            type: "wordpress",
+            port: "8085",
+            url: "http://localhost:8085",
+            running: false,
+            monogram: "B",
+            recentLabel: "08/05/2025, 09:10",
+            instancesCount: 1
+          },
+          {
+            name: "Sistema Escolar",
+            slug: "sistema-escolar",
+            path: "/d/ProjetosGit/escolar",
+            type: "php_public",
+            port: "8086",
+            url: "http://localhost:8086",
+            running: false,
+            monogram: "S",
+            recentLabel: "02/05/2025, 18:06",
+            instancesCount: 1
+          },
+          {
+            name: "Painel Admin",
+            slug: "painel-admin",
+            path: "/d/ProjetosGit/painel-admin",
+            type: "laravel",
+            port: "8087",
+            url: "http://localhost:8087",
+            running: false,
+            monogram: "P",
+            recentLabel: "30/04/2025, 12:17",
+            instancesCount: 1
+          },
+          {
+            name: "CRM Simple",
+            slug: "crm-simple",
+            path: "/d/ProjetosGit/crm-simple",
+            type: "php_root",
+            port: "8089",
+            url: "http://localhost:8089",
+            running: false,
+            monogram: "C",
+            recentLabel: "26/04/2025, 10:55",
+            instancesCount: 1
+          }
+        ]
+      };
+    </script>
+
+    <div class="page-shell">
+      <main class="page-wrap">
+        <section class="dashboard-surface" id="dashboard-preview">
+          <div class="brand-row">
+            <div class="brand">
+              <div class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5Zm3.36 7.85a1 1 0 0 1 0-1.41l2.79-2.79a1 1 0 1 1 1.41 1.41L9.47 12l2.09 2.09a1 1 0 1 1-1.41 1.41Zm9.92 1.15a1 1 0 1 1 0 2h-4.1a1 1 0 0 1 0-2Z"/>
+                </svg>
+              </div>
+              <div class="brand-copy">
+                <h1>gamb-php-serve</h1>
+                <p>Gerencie projetos PHP locais com um painel claro, rapido e orientado ao dia a dia.</p>
+              </div>
+            </div>
+
+            <div class="status-cluster">
+              <div class="status-badge">
+                <div class="status-dot">localhost rodando</div>
+                <p class="stat-note">Painel visual para abrir, acompanhar e executar seus projetos.</p>
+              </div>
+              <div class="icon-pill-group" aria-hidden="true">
+                <div class="icon-pill">?</div>
+                <div class="icon-pill">⚙</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-layout section-gap">
+            <section class="project-main">
+              <div class="section-head">
+                <div>
+                  <h2>Projetos recentes</h2>
+                  <p>Os quatro mais recentes aparecem em destaque. Os demais seguem ao lado em lista rolavel.</p>
+                </div>
+              </div>
+              <div class="project-grid js-project-grid"></div>
+            </section>
+
+            <aside class="project-sidebar">
+              <div class="sidebar-panel">
+                <div>
+                  <h3>Outros projetos</h3>
+                  <p class="ghost-note">Selecione um projeto para usar nas acoes rapidas abaixo.</p>
+                </div>
+                <div class="ghost-note">Projeto ativo nas acoes: <strong class="js-selected-project-label">Carregando...</strong></div>
+                <div class="sidebar-list js-project-list"></div>
+                <a class="sidebar-footer-link" href="./comandos.md">Ver todos os projetos<span aria-hidden="true">→</span></a>
+              </div>
+            </aside>
+          </div>
+
+          <section class="action-zone">
+            <div class="section-head">
+              <div>
+                <h2>Acoes rapidas no terminal</h2>
+                <p>Botoes pensados para CMD, PowerShell e Bash. A ponte do VS Code fica preparada para a extensao complementar.</p>
+              </div>
+            </div>
+            <div class="action-grid js-action-grid"></div>
+            <div class="terminal-panel js-terminal-panel">
+              <div class="project-card-header">
+                <h3>Retorno da ultima acao</h3>
+                <small class="terminal-meta js-terminal-meta"></small>
+              </div>
+              <pre class="terminal-command terminal-output js-terminal-output"></pre>
+            </div>
+          </section>
+        </section>
+
+        <section class="marketing-surface">
+          <div class="marketing-nav">
+            <div class="brand">
+              <div class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5Zm3.36 7.85a1 1 0 0 1 0-1.41l2.79-2.79a1 1 0 1 1 1.41 1.41L9.47 12l2.09 2.09a1 1 0 1 1-1.41 1.41Zm9.92 1.15a1 1 0 1 1 0 2h-4.1a1 1 0 0 1 0-2Z"/>
+                </svg>
+              </div>
+              <div>
+                <strong>gamb-php-serve</strong>
+              </div>
+            </div>
+            <nav class="marketing-links">
+              <a href="#como-funciona">Como funciona</a>
+              <a href="./comandos.md">Comandos</a>
+              <a href="#tecnologia">Tecnologia</a>
+              <a href="#portfolio">Portfolio</a>
+              <a href="#autoria">Autores</a>
+            </nav>
+            <a href="https://github.com/gamberine/gamb-php-serve" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <span class="hero-kicker">Bash global tool</span>
+              <h2>gamb-php-serve</h2>
+              <p>
+                Uma ferramenta Bash enxuta para registrar, subir, parar, listar e acompanhar seus projetos PHP locais sem
+                acoplar nada ao repositrio. A ideia aqui e simplificar o fluxo diario com uma camada moderna, clara e
+                pronta para evoluir.
+              </p>
+              <div class="hero-links">
+                <a class="pill-link primary" href="https://github.com/gamberine/gamb-php-serve" target="_blank" rel="noreferrer">Ver no GitHub</a>
+                <a class="pill-link" href="./instalacao.md">Instalacao rapida</a>
+                <a class="pill-link" href="./funcionamento.md">Como funciona</a>
+              </div>
+            </div>
+            <div class="hero-visual">
+              <img src="./assets/hero-illustration.png" alt="Ilustracao do painel gamb-php-serve com terminal e servidores locais">
+            </div>
+          </div>
+
+          <section class="feature-grid" id="como-funciona">
+            <article class="feature-card">
+              <div class="feature-head">
+                <h3>Registrar</h3>
+              </div>
+              <p>Adicione seus projetos uma vez e deixe o catalogo local cuidar da organizacao visual.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-head">
+                <h3>Gerenciar</h3>
+              </div>
+              <p>Inicie, pare, verifique e acompanhe tudo com comandos claros, navegador aberto e painel central.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-head">
+                <h3>Acessar</h3>
+              </div>
+              <p>Abra URLs locais com base path preservado e rode seu fluxo rapido direto do localhost.</p>
+            </article>
+          </section>
+
+          <section class="section-cards" id="tecnologia">
+            <article class="feature-card">
+              <h3>Comandos principais</h3>
+              <div class="mini-list">
+                <code>gamb-php-serve</code>
+                <code>gamb-php-stop</code>
+                <code>gamb-php-list</code>
+                <code>gamb-php-status --all</code>
+                <code>gamb-php-remove</code>
+              </div>
+              <p class="support-line">Suporte completo a CMD, PowerShell e Bash pela camada de comandos preparada no painel.</p>
+            </article>
+
+            <article class="feature-card">
+              <h3>Tecnologia leve</h3>
+              <ul>
+                <li>Bash puro para orquestrar o fluxo e manter a instalacao simples.</li>
+                <li>PHP built-in server e router externo para nao tocar no codigo dos projetos.</li>
+                <li>JSON legivel no browser para listar projetos, status e acoes locais.</li>
+                <li>Sem Node ou dependencias pesadas na ferramenta principal.</li>
+              </ul>
+            </article>
+
+            <article class="feature-card" id="autoria">
+              <h3>Autoria &amp; Craftsmanship</h3>
+              <p>
+                Autoria propria, alinhada com IA como parceira de design e qualidade. O foco e seguir buscando solucoes
+                modernas para melhorar o dia a dia, reduzir atrito e deixar o trabalho local mais claro, rapido e
+                confiavel.
+              </p>
+              <ul class="authorship-list">
+                <li>Foco em produtividade real e menos ruido operacional.</li>
+                <li>Codigo limpo, documentacao clara e interface de baixa friccao.</li>
+                <li>Merito em transformar utilidade tecnica em experiencia melhor de uso.</li>
+              </ul>
+              <div class="signature-block">
+                <div class="signature-name">Gamberine</div>
+                <div class="signature-role">Solucoes autorais com apoio de IA aplicada ao design e implementacao.</div>
+              </div>
+            </article>
+          </section>
+
+          <section class="section-gap" id="portfolio">
+            <div class="section-head">
+              <div>
+                <h2>Portfolio de solucoes</h2>
+                <p>Componente dinamico preparado para puxar links, repositrios e downloads do repositrio gamb-portfolio-solucoes.</p>
+              </div>
+              <div class="section-links">
+                <a href="https://github.com/gamberine/gamb-php-serve" target="_blank" rel="noreferrer">Repositorio principal</a>
+              </div>
+            </div>
+            <div class="portfolio-grid js-portfolio-grid">
+              <div class="portfolio-empty">Carregando componente dinamico...</div>
+            </div>
+          </section>
+
+          <div class="donation-line">
+            Pix para melhorias: <a href="mailto:gamberine@gmail.com">gamberine@gmail.com</a>
+          </div>
+        </section>
+      </main>
+      <div class="hidden js-toast" aria-live="polite"></div>
+    </div>
+
+    <script src="./assets/dashboard.js" defer></script>
+  </body>
+</html>

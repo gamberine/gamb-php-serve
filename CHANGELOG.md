@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- Adiciona hub visual em `localhost` com projetos recentes, lista lateral rolavel e acoes rapidas.
+- Publica uma landing GitHub Pages baseada no mesmo design do painel local.
+- Inclui ilustração central compartilhada entre o painel e a landing.
+- Adiciona workflow Pages em `.github/workflows/pages.yml`.
+- Passa a registrar recencia de uso em `projects-meta.tsv` para ordenar o catalogo visual.
+
 ## 0.2.0
 
 - Abre a URL no navegador padrao ao executar `gamb-php-serve` manualmente.

@@ -12,6 +12,14 @@ Formato:
 slug<TAB>path<TAB>type<TAB>host<TAB>port<TAB>docroot<TAB>index
 ```
 
+Recencia de uso:
+
+```text
+~/.config/gamb-php/projects-meta.tsv
+```
+
+Esse arquivo auxiliar guarda a ordem recente usada pelo hub visual.
+
 ## Tipos reconhecidos
 
 - `laravel` quando existe `artisan`
@@ -28,7 +36,21 @@ O padrão é `8000`. Se a porta estiver ocupada, a ferramenta tenta `8001` até 
 - `laravel` usa `php artisan serve --host=127.0.0.1 --port=PORT`
 - os demais usam `php -S 127.0.0.1:PORT -t DOCROOT ROUTER`
 
+## Hub local
+
+O router externo agora reserva a rota:
+
+```text
+/__gamb_php__/hub
+```
+
+Essa rota entrega:
+
+- dashboard com projetos recentes;
+- lista lateral com overflow dos demais;
+- acoes rapidas com comandos por shell;
+- area de retorno para acoes executadas localmente.
+
 ## Auto-start
 
 O instalador adiciona um hook no `~/.bashrc` que chama `gamb-php-auto` no prompt. Quando a pasta atual coincide com um projeto registrado e o servidor não está rodando, ele sobe silenciosamente.
-

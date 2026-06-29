@@ -3,6 +3,9 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  export GAMB_PHP_SHARE_DIR="${GAMB_PHP_SHARE_DIR:-$script_dir/../share}"
+  export GAMB_PHP_DASHBOARD_DIR="${GAMB_PHP_DASHBOARD_DIR:-$script_dir/../share/dashboard}"
+  export GAMB_PHP_ASSETS_DIR="${GAMB_PHP_ASSETS_DIR:-$script_dir/../docs/assets}"
   # shellcheck disable=SC1091
   source "$script_dir/../lib/gamb-php-common.sh"
 elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
