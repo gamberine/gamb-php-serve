@@ -11,19 +11,19 @@ O instalador copia os comandos para `~/.local/bin`, a biblioteca comum para `~/.
 ## Instalação principal
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb_php_serve/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve/main/install.sh)"
 ```
 
 ## Instalação alternativa
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/gamberine/gamb_php_serve/main/install.sh)"
+bash -c "$(wget -qO- https://raw.githubusercontent.com/gamberine/gamb-php-serve/main/install.sh)"
 ```
 
 ## Instalação via CDN
 
 ```bash
-bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/gamberine/gamb_php_serve@main/install.sh)"
+bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/gamberine/gamb-php-serve@main/install.sh)"
 ```
 
 ## O que o instalador faz
@@ -36,4 +36,3 @@ bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/gamberine/gamb_php_serve@main/
 - Copia os scripts globais.
 - Adiciona `~/.local/bin` no `~/.bashrc`.
 - Adiciona o hook de auto-start no `~/.bashrc`.
-

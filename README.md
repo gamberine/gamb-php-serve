@@ -1,4 +1,4 @@
-# gamb_php_serve
+# gamb-php-serve
 
 Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAMPP ou Apache externo.
 
@@ -14,19 +14,19 @@ Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAM
 ## Instalação em uma linha
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb_php_serve/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve/main/install.sh)"
 ```
 
 ## Instalação alternativa
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/gamberine/gamb_php_serve/main/install.sh)"
+bash -c "$(wget -qO- https://raw.githubusercontent.com/gamberine/gamb-php-serve/main/install.sh)"
 ```
 
 ## Instalação via CDN
 
 ```bash
-bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/gamberine/gamb_php_serve@main/install.sh)"
+bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/gamberine/gamb-php-serve@main/install.sh)"
 ```
 
 ## Primeiro uso
@@ -93,7 +93,7 @@ gamb-php-remove
 ## Como desinstalar
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb_php_serve/main/uninstall.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve/main/uninstall.sh)"
 ```
 
 ## Segurança
@@ -102,4 +102,3 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb_php_serve
 - Não expõe na rede.
 - Não altera arquivos do projeto.
 - Não deve ser usado em produção.
-

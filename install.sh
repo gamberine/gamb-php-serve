@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GAMB_PHP_SERVE_REPO="${GAMB_PHP_SERVE_REPO:-https://raw.githubusercontent.com/gamberine/gamb_php_serve/main}"
+GAMB_PHP_SERVE_REPO="${GAMB_PHP_SERVE_REPO:-https://raw.githubusercontent.com/gamberine/gamb-php-serve/main}"
 
 script_dir=""
 if [ -n "${BASH_SOURCE[0]:-}" ] && [ -e "${BASH_SOURCE[0]}" ]; then
@@ -133,4 +133,3 @@ EOF
 }
 
 main "$@"
-
