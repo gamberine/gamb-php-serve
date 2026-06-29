@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-common.sh"
+elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+else
+  printf '%s\n' 'Biblioteca gamb-php-common.sh não encontrada.' >&2
+  exit 1
+fi
+
+case "${1:-}" in
+  --help|-h)
+    gamb_php_print_usage_list
+    exit 0
+    ;;
+  "")
+    ;;
+  *)
+    printf 'Argumento desconhecido: %s\n' "$1" >&2
+    exit 1
+    ;;
+esac
+
+printf 'Slug\tCaminho\tTipo\tPorta\tStatus\tURL\n'
+if [ -f "$gamb_php_projects_file" ]; then
+  while IFS=$'\t' read -r slug path type host port docroot index; do
+    [ -z "${slug:-}" ] && continue
+    status='parado'
+    if pid="$(gamb_php_running_state_for_row "$slug" || true)"; then
+      [ -n "$pid" ] && status='rodando'
+    fi
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$slug" "$path" "$type" "$port" "$status" "$(gamb_php_command_url "$host" "$port")"
+  done < "$gamb_php_projects_file"
+fi
+

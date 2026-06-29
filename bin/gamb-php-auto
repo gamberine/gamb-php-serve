@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-common.sh"
+elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+else
+  exit 0
+fi
+
+case "${1:-}" in
+  --help|-h)
+    gamb_php_print_usage_auto
+    exit 0
+    ;;
+esac
+
+gamb_php_start_registered_project "$(gamb_php_current_dir)" "" 0 1 >/dev/null 2>&1 || true
+

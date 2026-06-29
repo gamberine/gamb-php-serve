@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-common.sh"
+elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+else
+  printf '%s\n' 'Biblioteca gamb-php-common.sh não encontrada.' >&2
+  exit 1
+fi
+
+foreground=0
+port=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --foreground)
+      foreground=1
+      shift
+      ;;
+    --port)
+      port="${2:-}"
+      [ -n "$port" ] || { printf '%s\n' 'Faltou o valor de --port.' >&2; exit 1; }
+      shift 2
+      ;;
+    --help|-h)
+      gamb_php_print_usage_serve
+      exit 0
+      ;;
+    *)
+      printf 'Argumento desconhecido: %s\n' "$1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+gamb_php_start_registered_project "$(gamb_php_current_dir)" "$port" "$foreground" 0

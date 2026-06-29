@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-common.sh"
+elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+else
+  printf '%s\n' 'Biblioteca gamb-php-common.sh não encontrada.' >&2
+  exit 1
+fi
+
+case "${1:-}" in
+  --help|-h)
+    gamb_php_print_usage_check
+    exit 0
+    ;;
+  "")
+    ;;
+  *)
+    printf 'Argumento desconhecido: %s\n' "$1" >&2
+    exit 1
+    ;;
+esac
+
+cwd="$(gamb_php_current_dir)"
+printf 'Pasta atual: %s\n' "$cwd"
+
+if php_bin="$(gamb_php_detect_php)"; then
+  printf 'PHP detectado: %s\n' "$php_bin"
+  printf 'Versão do PHP: %s\n' "$(gamb_php_php_version_line "$php_bin")"
+else
+  printf '%s\n' 'PHP detectado: não encontrado'
+fi
+
+if gamb_php_detect_composer; then
+  printf '%s\n' 'Composer: disponível'
+else
+  printf '%s\n' 'Composer: indisponível'
+fi
+
+if [ -f "$cwd/composer.json" ]; then
+  printf '%s\n' 'composer.json: sim'
+else
+  printf '%s\n' 'composer.json: não'
+fi
+
+if [ -d "$cwd/vendor" ]; then
+  printf '%s\n' 'vendor/: sim'
+else
+  printf '%s\n' 'vendor/: não'
+fi
+
+if root="$(gamb_php_detect_project_root 2>/dev/null)"; then
+  if type_row="$(gamb_php_detect_project_type "$root")"; then
+    IFS=$'\t' read -r probable_type probable_docroot probable_index <<EOF
+$type_row
+EOF
+    printf 'Tipo provável do projeto: %s\n' "$probable_type"
+  else
+    printf '%s\n' 'Tipo provável do projeto: desconhecido'
+  fi
+else
+  printf '%s\n' 'Tipo provável do projeto: desconhecido'
+fi
+
+if row="$(gamb_php_find_registered_row_for_cwd "$cwd")"; then
+  IFS=$'\t' read -r slug path type host port docroot index <<EOF
+$row
+EOF
+  printf '%s\n' 'Projeto registrado: sim'
+  printf 'URL: %s\n' "$(gamb_php_command_url "$host" "$port")"
+  if pid="$(gamb_php_running_state_for_row "$slug" || true)"; then
+    printf 'Status: rodando (PID %s)\n' "$pid"
+  else
+    printf '%s\n' 'Status: parado'
+  fi
+else
+  printf '%s\n' 'Projeto registrado: não'
+fi
+

@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-common.sh"
+elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+else
+  printf '%s\n' 'Biblioteca gamb-php-common.sh não encontrada.' >&2
+  exit 1
+fi
+
+stop_all=0
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --all)
+      stop_all=1
+      shift
+      ;;
+    --help|-h)
+      gamb_php_print_usage_stop
+      exit 0
+      ;;
+    *)
+      printf 'Argumento desconhecido: %s\n' "$1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ "$stop_all" -eq 1 ]; then
+  if [ -f "$gamb_php_projects_file" ]; then
+    while IFS=$'\t' read -r slug path type host port docroot index; do
+      [ -z "${slug:-}" ] && continue
+      gamb_php_stop_project_by_row "$slug" "$host" "$port" >/dev/null 2>&1 || true
+    done < "$gamb_php_projects_file"
+  fi
+  exit 0
+fi
+
+row="$(gamb_php_find_registered_row_for_cwd "$(gamb_php_current_dir)")" || {
+  printf '%s\n' 'Projeto não registrado nesta pasta.' >&2
+  exit 1
+}
+
+IFS=$'\t' read -r slug path type host port docroot index <<EOF
+$row
+EOF
+
+gamb_php_stop_project_by_row "$slug" "$host" "$port" >/dev/null 2>&1 || true
+
