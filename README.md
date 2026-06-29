@@ -6,10 +6,15 @@ Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAM
 
 - Registra projetos PHP no seu usuário.
 - Sobe servidor local usando o PHP built-in server ou `php artisan serve`.
+- Abre a URL no navegador padrao quando `gamb-php-serve` e executado manualmente.
+- Recarrega a pagina automaticamente ao salvar arquivos do projeto enquanto o servidor estiver rodando.
 - Auto-inicia ao entrar novamente na pasta de um projeto registrado.
+- Exibe e abre URLs como `http://localhost:PORTA/...`, mantendo o bind local em `127.0.0.1`.
 - Não altera o repositório do projeto.
 - Não cria arquivos dentro do projeto.
 - Detecta Laravel, WordPress, PHP com `public/` e PHP simples.
+- Respeita prefixos locais como `/admin` e `/extranet` quando definidos no `config/local.php`.
+- Permite subir outra instância manual do mesmo projeto em outra janela usando apenas `--port`.
 
 ## Instalação em uma linha
 
@@ -64,6 +69,12 @@ gamb-php-remove
 gamb-php-remove --with-logs
 ```
 
+Para rodar o mesmo projeto em outra janela do VS Code, basta informar outra porta:
+
+```bash
+gamb-php-serve --port 8081
+```
+
 ## Diretórios usados
 
 - `~/.local/bin`
@@ -76,6 +87,20 @@ Se você usa PHP portátil, defina:
 
 ```bash
 export GAMB_PHP_BIN="/d/tools/php/php.exe"
+```
+
+## Variaveis opcionais
+
+Para nao abrir o navegador automaticamente:
+
+```bash
+export GAMB_PHP_NO_BROWSER=1
+```
+
+Para desativar o live reload automatico ao salvar:
+
+```bash
+export GAMB_PHP_NO_LIVE_RELOAD=1
 ```
 
 ## Como parar
@@ -99,6 +124,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve
 ## Segurança
 
 - Usa `127.0.0.1`.
+- Exibe `localhost` na URL por conveniencia, mas continua ouvindo apenas no loopback local.
 - Não expõe na rede.
 - Não altera arquivos do projeto.
 - Não deve ser usado em produção.

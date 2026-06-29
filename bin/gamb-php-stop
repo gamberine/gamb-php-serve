@@ -42,14 +42,18 @@ if [ "$stop_all" -eq 1 ]; then
   exit 0
 fi
 
-row="$(gamb_php_find_registered_row_for_cwd "$(gamb_php_current_dir)")" || {
+rows="$(gamb_php_find_registered_rows_for_cwd "$(gamb_php_current_dir)")" || {
   printf '%s\n' 'Projeto não registrado nesta pasta.' >&2
   exit 1
 }
 
-IFS=$'\t' read -r slug path type host port docroot index <<EOF
+while IFS= read -r row; do
+  [ -z "$row" ] && continue
+  IFS=$'\t' read -r slug path type host port docroot index <<EOF
 $row
 EOF
-
-gamb_php_stop_project_by_row "$slug" "$host" "$port" >/dev/null 2>&1 || true
+  gamb_php_stop_project_by_row "$slug" "$host" "$port" >/dev/null 2>&1 || true
+done <<EOF
+$rows
+EOF
 

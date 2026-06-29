@@ -34,21 +34,26 @@ done
 
 gamb_php_ensure_dirs
 
-row="$(gamb_php_find_registered_row_for_cwd "$(gamb_php_current_dir)")" || {
+rows="$(gamb_php_find_registered_rows_for_cwd "$(gamb_php_current_dir)")" || {
   printf '%s\n' 'Projeto não registrado nesta pasta.' >&2
   exit 1
 }
 
-IFS=$'\t' read -r slug path type host port docroot index <<EOF
+path=""
+while IFS= read -r row; do
+  [ -z "$row" ] && continue
+  IFS=$'\t' read -r slug path type host port docroot index <<EOF
 $row
 EOF
+  gamb_php_stop_project_by_row "$slug" "$host" "$port" >/dev/null 2>&1 || true
+  rm -f "$(gamb_php_router_file_for_row "$slug")"
+  rm -f "$(gamb_php_pid_file_for_row "$slug")"
 
-gamb_php_stop_project_by_row "$slug" "$host" "$port" >/dev/null 2>&1 || true
-rm -f "$(gamb_php_router_file_for_row "$slug")"
-rm -f "$(gamb_php_pid_file_for_row "$slug")"
-
-if [ "$with_logs" -eq 1 ]; then
-  rm -f "$(gamb_php_log_file_for_row "$slug")"
-fi
+  if [ "$with_logs" -eq 1 ]; then
+    rm -f "$(gamb_php_log_file_for_row "$slug")"
+  fi
+done <<EOF
+$rows
+EOF
 
 gamb_php_registry_remove_path "$path" >/dev/null 2>&1 || true

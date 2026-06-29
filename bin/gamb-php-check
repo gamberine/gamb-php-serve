@@ -69,17 +69,23 @@ else
   printf '%s\n' 'Tipo provável do projeto: desconhecido'
 fi
 
-if row="$(gamb_php_find_registered_row_for_cwd "$cwd")"; then
-  IFS=$'\t' read -r slug path type host port docroot index <<EOF
+if rows="$(gamb_php_find_registered_rows_for_cwd "$cwd")"; then
+  printf '%s\n' 'Projeto registrado: sim'
+  while IFS= read -r row; do
+    [ -z "$row" ] && continue
+    IFS=$'\t' read -r slug path type host port docroot index <<EOF
 $row
 EOF
-  printf '%s\n' 'Projeto registrado: sim'
-  printf 'URL: %s\n' "$(gamb_php_command_url "$host" "$port")"
-  if pid="$(gamb_php_running_state_for_row "$slug" || true)"; then
-    printf 'Status: rodando (PID %s)\n' "$pid"
-  else
-    printf '%s\n' 'Status: parado'
-  fi
+    base_path="$(gamb_php_detect_base_path "$path")"
+    printf 'URL: %s\n' "$(gamb_php_command_url "$host" "$port" "$base_path")"
+    if pid="$(gamb_php_running_state_for_row "$slug" 2>/dev/null)" && [ -n "$pid" ]; then
+      printf 'Status: rodando (PID %s)\n' "$pid"
+    else
+      printf '%s\n' 'Status: parado'
+    fi
+  done <<EOF
+$rows
+EOF
 else
   printf '%s\n' 'Projeto registrado: não'
 fi

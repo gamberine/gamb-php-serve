@@ -55,8 +55,14 @@ if [ "$show_all" -eq 1 ]; then
   exit 0
 fi
 
-row="$(gamb_php_find_registered_row_for_cwd "$(gamb_php_current_dir)")" || {
+rows="$(gamb_php_find_registered_rows_for_cwd "$(gamb_php_current_dir)")" || {
   printf '%s\n' 'Projeto não registrado nesta pasta.' >&2
   exit 1
 }
-print_row_status "$row"
+
+while IFS= read -r row; do
+  [ -z "$row" ] && continue
+  print_row_status "$row"
+done <<EOF
+$rows
+EOF

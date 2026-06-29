@@ -31,10 +31,11 @@ printf 'Slug\tCaminho\tTipo\tPorta\tStatus\tURL\n'
 if [ -f "$gamb_php_projects_file" ]; then
   while IFS=$'\t' read -r slug path type host port docroot index; do
     [ -z "${slug:-}" ] && continue
+    base_path="$(gamb_php_detect_base_path "$path")"
     status='parado'
-    if pid="$(gamb_php_running_state_for_row "$slug" || true)"; then
-      [ -n "$pid" ] && status='rodando'
+    if pid="$(gamb_php_running_state_for_row "$slug" 2>/dev/null)" && [ -n "$pid" ]; then
+      status='rodando'
     fi
-    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$slug" "$path" "$type" "$port" "$status" "$(gamb_php_command_url "$host" "$port")"
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$slug" "$path" "$type" "$port" "$status" "$(gamb_php_command_url "$host" "$port" "$base_path")"
   done < "$gamb_php_projects_file"
 fi
