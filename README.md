@@ -1,4 +1,4 @@
-# gamb-php-serve
+# Gamberine PHP serve 
 
 Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAMPP ou Apache externo.
 
