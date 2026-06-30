@@ -18,6 +18,10 @@ dest_state_dir="$HOME/.local/state/gamb-php"
 dest_pids_dir="$dest_state_dir/pids"
 dest_logs_dir="$dest_state_dir/logs"
 dest_routers_dir="$dest_state_dir/routers"
+dest_db_state_dir="$dest_state_dir/db"
+dest_db_pids_dir="$dest_db_state_dir/pids"
+dest_db_logs_dir="$dest_db_state_dir/logs"
+dest_db_meta_dir="$dest_db_state_dir/meta"
 projects_file="$dest_config_dir/projects.tsv"
 projects_meta_file="$dest_config_dir/projects-meta.tsv"
 bashrc_file="$HOME/.bashrc"
@@ -31,10 +35,15 @@ files_bin=(
   "bin/gamb-php-list"
   "bin/gamb-php-remove"
   "bin/gamb-php-check"
+  "bin/gamb-php-db-check"
+  "bin/gamb-php-db-status"
+  "bin/gamb-php-db-start"
+  "bin/gamb-php-db-stop"
 )
 
 files_lib=(
   "lib/gamb-php-common.sh"
+  "lib/gamb-php-db.sh"
 )
 
 files_share=(
@@ -53,7 +62,10 @@ ensure_dirs() {
     "$dest_assets_dir" \
     "$dest_pids_dir" \
     "$dest_logs_dir" \
-    "$dest_routers_dir"
+    "$dest_routers_dir" \
+    "$dest_db_pids_dir" \
+    "$dest_db_logs_dir" \
+    "$dest_db_meta_dir"
 }
 
 copy_local_or_remote() {
@@ -170,6 +182,7 @@ main() {
 
   chmod +x "$dest_bin_dir"/gamb-php-*
   chmod +x "$dest_lib_dir"/gamb-php-common.sh
+  chmod +x "$dest_lib_dir"/gamb-php-db.sh
 
   [ -f "$projects_file" ] || : > "$projects_file"
   [ -f "$projects_meta_file" ] || : > "$projects_meta_file"
@@ -183,6 +196,7 @@ Instalação concluída.
 Próximos passos:
   source ~/.bashrc
   gamb-php-check
+  gamb-php-db-check
   gamb-php-serve
 EOF
 }

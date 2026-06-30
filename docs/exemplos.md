@@ -32,6 +32,22 @@ gamb-php-serve --foreground
 gamb-php-check
 ```
 
+## Banco local
+
+```bash
+gamb-php-db-check
+gamb-php-db-start
+gamb-php-db-status
+gamb-php-db-stop
+```
+
+## Banco por engine
+
+```bash
+gamb-php-db-start mysql
+gamb-php-db-start mariadb
+```
+
 ## Abrindo o painel diretamente
 
 ```text

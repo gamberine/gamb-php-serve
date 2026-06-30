@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- Adiciona a MV2 com modulo opcional de banco para detectar, iniciar, verificar e parar MySQL/MariaDB local.
+- Mantem o fluxo atual do `gamb-php-serve` sem auto-start ou acoplamento obrigatorio com banco.
+- Expande o hub local com acoes rapidas para o modulo de banco.
+- Atualiza instalador, desinstalador e documentacao para a nova camada opcional.
+
 ## 0.3.0
 
 - Adiciona hub visual em `localhost` com projetos recentes, lista lateral rolavel e acoes rapidas.

@@ -38,6 +38,43 @@
       danger: true,
     },
     {
+      id: "db_check",
+      label: "Descobrir bancos",
+      description: "Varre perfis MySQL/MariaDB disponiveis nesta maquina.",
+      icon: "database",
+      scope: "global",
+      command: "gamb-php-db-check",
+      executeLabel: "Executar aqui",
+    },
+    {
+      id: "db_start",
+      label: "Iniciar banco local",
+      description: "Sobe o perfil sugerido do modulo opcional de banco.",
+      icon: "play",
+      scope: "global",
+      command: "gamb-php-db-start",
+      executeLabel: "Executar aqui",
+    },
+    {
+      id: "db_status",
+      label: "Status do banco",
+      description: "Mostra o estado dos perfis conhecidos e portas em uso.",
+      icon: "database",
+      scope: "global",
+      command: "gamb-php-db-status",
+      executeLabel: "Executar aqui",
+    },
+    {
+      id: "db_stop",
+      label: "Parar banco local",
+      description: "Encerra apenas bancos gerenciados pelo modulo.",
+      icon: "stop",
+      scope: "global",
+      command: "gamb-php-db-stop",
+      executeLabel: "Executar aqui",
+      danger: true,
+    },
+    {
       id: "list",
       label: "Listar projetos",
       description: "Mostra todos os projetos implantados localmente.",
@@ -67,6 +104,10 @@
     },
   ];
 
+  function findAction(actionId) {
+    return actionDefinitions.find((item) => item.id === actionId) || null;
+  }
+
   const iconMap = {
     arrow:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.17 5.17a1 1 0 0 1 1.41 0l6.25 6.25a1 1 0 0 1 0 1.41l-6.25 6.25a1 1 0 1 1-1.41-1.41L17.71 13H4a1 1 0 1 1 0-2h13.71l-4.54-4.83a1 1 0 0 1 0-1.41Z"/></svg>',
@@ -80,6 +121,8 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.75A10.25 10.25 0 1 0 22.25 12 10.26 10.26 0 0 0 12 1.75Zm-1.67 6.9 5.42 3.16a1.25 1.25 0 0 1 0 2.16l-5.42 3.16A1.25 1.25 0 0 1 8.5 16.05V8.73a1.25 1.25 0 0 1 1.83-1.08Z"/></svg>',
     stop:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.75A10.25 10.25 0 1 0 22.25 12 10.26 10.26 0 0 0 12 1.75Zm3 13.25a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1Z"/></svg>',
+    database:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3c-4.56 0-8 1.72-8 4v10c0 2.28 3.44 4 8 4s8-1.72 8-4V7c0-2.28-3.44-4-8-4Zm0 1.5c3.9 0 6.5 1.4 6.5 2.5s-2.6 2.5-6.5 2.5S5.5 8.1 5.5 7 8.1 4.5 12 4.5Zm0 6.5c2.57 0 4.88-.48 6.5-1.33V12c0 1.1-2.6 2.5-6.5 2.5S5.5 13.1 5.5 12V9.67C7.12 10.52 9.43 11 12 11Zm0 8c-3.9 0-6.5-1.4-6.5-2.5v-2.33C7.12 15.02 9.43 15.5 12 15.5s4.88-.48 6.5-1.33v2.33c0 1.1-2.6 2.5-6.5 2.5Z"/></svg>',
     list:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 5.75A1.75 1.75 0 1 1 3.25 7.5 1.75 1.75 0 0 1 5 5.75Zm4 1.25a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10A1 1 0 0 1 9 7Zm0 10a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10A1 1 0 0 1 9 17Zm-4-2.75A1.75 1.75 0 1 1 3.25 16 1.75 1.75 0 0 1 5 14.25Zm0-4.25A1.75 1.75 0 1 1 6.75 11.75 1.75 1.75 0 0 1 5 10Zm4 1.75a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10a1 1 0 0 1-1-1Z"/></svg>',
     status:
@@ -307,7 +350,10 @@
         } else if (project.url) {
           window.open(project.url, "_blank", "noopener");
         } else {
-          await copyText(buildShellCommand(actionDefinitions[1], project, "bash"));
+          const serveAction = findAction("serve");
+          if (serveAction) {
+            await copyText(buildShellCommand(serveAction, project, "bash"));
+          }
           notify("Comando copiado para iniciar o projeto.");
         }
       });
@@ -393,7 +439,7 @@
 
     qsa(".js-copy-action").forEach((button) => {
       button.addEventListener("click", async () => {
-        const action = actionDefinitions.find((item) => item.id === button.getAttribute("data-action"));
+        const action = findAction(button.getAttribute("data-action"));
         if (!action) return;
         const command = buildShellCommand(action, selected, getShell(action.id));
         await copyText(command);
@@ -403,7 +449,7 @@
 
     qsa(".js-run-action").forEach((button) => {
       button.addEventListener("click", async () => {
-        const action = actionDefinitions.find((item) => item.id === button.getAttribute("data-action"));
+        const action = findAction(button.getAttribute("data-action"));
         if (!action) return;
         await runActionRequest(action.id, selected);
       });
@@ -411,7 +457,7 @@
 
     qsa(".js-bridge-action").forEach((button) => {
       button.addEventListener("click", async () => {
-        const action = actionDefinitions.find((item) => item.id === button.getAttribute("data-action"));
+        const action = findAction(button.getAttribute("data-action"));
         if (!action) return;
         const shell = getShell(action.id);
         const command = buildShellCommand(action, selected, shell);

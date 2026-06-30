@@ -559,6 +559,26 @@ function gambHubHandleAction(array $ctx): void
             $meta = "Status geral";
             break;
 
+        case "db_check":
+            $command = "gamb-php-db-check";
+            $meta = "Descoberta de bancos";
+            break;
+
+        case "db_start":
+            $command = "gamb-php-db-start";
+            $meta = "Inicializacao do banco local";
+            break;
+
+        case "db_status":
+            $command = "gamb-php-db-status";
+            $meta = "Status do banco local";
+            break;
+
+        case "db_stop":
+            $command = "gamb-php-db-stop";
+            $meta = "Parada do banco local";
+            break;
+
         case "remove":
             $command = "gamb-php-remove";
             $meta = "Remocao do projeto";
@@ -696,7 +716,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
     <title>gamb-php-serve hub</title>
     <meta
       name="description"
-      content="Painel visual do gamb-php-serve para listar projetos locais, abrir URLs e acionar comandos utilitarios do fluxo PHP local."
+      content="Painel visual do gamb-php-serve para listar projetos locais, abrir URLs e acionar comandos utilitarios de PHP e MySQL/MariaDB local."
     >
     <link rel="stylesheet" href="<?= gambHubEscape($dashboardBasePath . "/assets/dashboard.css") ?>">
   </head>
@@ -717,7 +737,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
               </div>
               <div class="brand-copy">
                 <h1>gamb-php-serve</h1>
-                <p>Hub local para seus projetos PHP com gestao visual, URLs prontas e comandos rapidos.</p>
+                <p>Hub local para projetos PHP com gestao visual, URLs prontas e modulo opcional de MySQL/MariaDB.</p>
               </div>
             </div>
 
@@ -758,12 +778,12 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
           </div>
 
           <section class="action-zone">
-            <div class="section-head">
-              <div>
-                <h2>Acoes rapidas no terminal</h2>
-                <p>Os comandos ja saem prontos para CMD, PowerShell e Bash. Quando a extensao complementar existir, a ponte do VS Code assume a injecao no terminal aberto.</p>
+              <div class="section-head">
+                <div>
+                  <h2>Acoes rapidas no terminal</h2>
+                  <p>Os comandos ja saem prontos para CMD, PowerShell e Bash, cobrindo projeto e banco local. Quando a extensao complementar existir, a ponte do VS Code assume a injecao no terminal aberto.</p>
+                </div>
               </div>
-            </div>
             <div class="action-grid js-action-grid"></div>
             <div class="terminal-panel js-terminal-panel">
               <div class="project-card-header">
@@ -802,7 +822,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
               <p>
                 Uma camada visual moderna sobre o motor Bash do serve. A proposta continua a mesma: nao tocar nos projetos,
                 centralizar a configuracao no usuario e manter um fluxo rapido para iniciar, parar, listar e abrir
-                ambientes locais sem ruido.
+                ambientes locais sem ruido, agora com um modulo paralelo para MySQL/MariaDB quando fizer sentido.
               </p>
               <div class="hero-links">
                 <a class="pill-link primary" href="<?= gambHubEscape($repoUrl) ?>" target="_blank" rel="noreferrer">Ver no GitHub</a>
@@ -822,7 +842,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
             </article>
             <article class="feature-card">
               <div class="feature-head"><h3>Gerenciar</h3></div>
-              <p>Aciona o que precisa por browser, Bash e futuras pontes de editor sem alterar codigo versionado.</p>
+              <p>Aciona projeto e banco local por browser, Bash e futuras pontes de editor sem alterar codigo versionado.</p>
             </article>
             <article class="feature-card">
               <div class="feature-head"><h3>Acessar</h3></div>
@@ -838,6 +858,8 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
                 <code>gamb-php-stop</code>
                 <code>gamb-php-list</code>
                 <code>gamb-php-status --all</code>
+                <code>gamb-php-db-start</code>
+                <code>gamb-php-db-status</code>
                 <code>gamb-php-remove</code>
               </div>
               <p class="support-line">A camada visual usa os mesmos comandos do motor principal. O painel so reduz atrito operacional.</p>
@@ -848,6 +870,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
               <ul>
                 <li>Bash puro para instalacao, descoberta de ambiente e orquestracao do ciclo local.</li>
                 <li>PHP built-in server com router externo para nao criar arquivos nos projetos do usuario.</li>
+                <li>Modulo opcional de MySQL/MariaDB reaproveitando instalacoes locais ja existentes.</li>
                 <li>HTML, CSS e JavaScript sem build pesado para a camada visual e para a GitHub Pages.</li>
                 <li>Camada opcional de IA no design e no polimento, sem acoplar dependencias ao uso final.</li>
               </ul>

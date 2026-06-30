@@ -48,8 +48,25 @@ Essa rota entrega:
 
 - dashboard com projetos recentes;
 - lista lateral com overflow dos demais;
-- acoes rapidas com comandos por shell;
+- acoes rapidas com comandos por shell para projeto e banco local;
 - area de retorno para acoes executadas localmente.
+
+## Banco opcional (MV2)
+
+O modulo de banco roda em paralelo ao fluxo PHP e so atua quando um comando `gamb-php-db-*` e chamado.
+
+O objetivo e reaproveitar binarios locais de MySQL/MariaDB, detectando perfis por configuracoes como `my.ini` e mantendo o estado do modulo em:
+
+```text
+~/.local/state/gamb-php/db
+```
+
+Regras da MV2:
+
+- nao inicia banco automaticamente ao entrar no projeto;
+- nao altera o comportamento atual de `gamb-php-serve`;
+- prioriza um perfil padrao, mas aceita `mysql`, `mariadb` ou `--profile`;
+- nao derruba um banco externo que nao tenha sido iniciado pelo proprio modulo.
 
 ## Auto-start
 

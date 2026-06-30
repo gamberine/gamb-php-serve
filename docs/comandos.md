@@ -59,6 +59,43 @@ Mostra informações do ambiente atual.
 gamb-php-check
 ```
 
+## `gamb-php-db-check`
+
+Descobre instalacoes locais de MySQL/MariaDB e mostra o perfil sugerido.
+
+```bash
+gamb-php-db-check
+```
+
+## `gamb-php-db-status`
+
+Mostra o estado dos perfis de banco conhecidos.
+
+```bash
+gamb-php-db-status
+gamb-php-db-status mysql
+gamb-php-db-status mariadb
+```
+
+## `gamb-php-db-start`
+
+Inicia o perfil sugerido ou um engine especifico, sem acoplar o banco ao `gamb-php-serve`.
+
+```bash
+gamb-php-db-start
+gamb-php-db-start mysql
+gamb-php-db-start mariadb
+```
+
+## `gamb-php-db-stop`
+
+Para os bancos gerenciados pelo modulo.
+
+```bash
+gamb-php-db-stop
+gamb-php-db-stop all
+```
+
 ## Hub visual
 
 Rota reservada do painel:
@@ -72,4 +109,5 @@ O hub traz:
 - 4 projetos recentes em destaque.
 - lista lateral com os demais projetos registrados.
 - comandos preparados para CMD, PowerShell e Bash.
+- acoes extras para detectar, iniciar, verificar e parar MySQL/MariaDB local.
 - copia imediata de comandos e ponte preparada para terminal do VS Code.

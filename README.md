@@ -16,6 +16,7 @@ Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAM
 - Detecta Laravel, WordPress, PHP com `public/` e PHP simples.
 - Respeita prefixos locais como `/admin` e `/extranet` quando definidos no `config/local.php`.
 - Permite subir outra instância manual do mesmo projeto em outra janela usando apenas `--port`.
+- Inclui um modulo opcional de banco para iniciar e parar MySQL/MariaDB local sem acoplar isso ao fluxo atual do `serve`.
 
 ## Instalação em uma linha
 
@@ -62,6 +63,10 @@ Ao entrar novamente na pasta do projeto pelo Git Bash, o servidor sobe automatic
 - `gamb-php-list`
 - `gamb-php-remove`
 - `gamb-php-check`
+- `gamb-php-db-check`
+- `gamb-php-db-status`
+- `gamb-php-db-start`
+- `gamb-php-db-stop`
 
 ## Exemplos
 
@@ -76,6 +81,11 @@ gamb-php-stop --all
 gamb-php-list
 gamb-php-remove
 gamb-php-remove --with-logs
+gamb-php-db-check
+gamb-php-db-status
+gamb-php-db-start
+gamb-php-db-start mariadb
+gamb-php-db-stop
 ```
 
 Para rodar o mesmo projeto em outra janela do VS Code, basta informar outra porta:
@@ -89,7 +99,7 @@ gamb-php-serve --port 8081
 - Grid com os 4 projetos mais recentes.
 - Lista lateral rolavel com os demais projetos implantados.
 - Cards com nome, logo/favicon quando existir, URL e status.
-- Acoes rapidas com comandos preparados para CMD, PowerShell e Bash.
+- Acoes rapidas com comandos preparados para CMD, PowerShell e Bash, incluindo o modulo opcional de banco.
 - Ponte de VS Code pronta para uma extensao complementar futura, com copia de comando como fallback imediato.
 
 ## GitHub Pages
@@ -117,6 +127,29 @@ Se você usa PHP portátil, defina:
 export GAMB_PHP_BIN="/d/tools/php/php.exe"
 ```
 
+## Modulo de banco opcional
+
+O `gamb-php-serve` continua funcionando sem banco local. A MV2 apenas adiciona comandos paralelos para detectar e orquestrar MySQL/MariaDB quando houver binarios locais disponiveis.
+
+Fluxo rapido:
+
+```bash
+gamb-php-db-check
+gamb-php-db-start
+gamb-php-db-status
+gamb-php-db-stop
+```
+
+Selecao explicita:
+
+```bash
+gamb-php-db-start mysql
+gamb-php-db-start mariadb
+gamb-php-db-stop all
+```
+
+O modulo nao altera o comportamento atual do `gamb-php-serve` e nao faz auto-start de banco ao entrar no projeto.
+
 ## Variaveis opcionais
 
 Para nao abrir o navegador automaticamente:
@@ -129,6 +162,18 @@ Para desativar o live reload automatico ao salvar:
 
 ```bash
 export GAMB_PHP_NO_LIVE_RELOAD=1
+```
+
+Para definir um perfil de banco preferencial:
+
+```bash
+export GAMB_PHP_DB_PROFILE="mysql-wamp64-8.0.31"
+```
+
+Para ampliar a varredura de instalacoes locais:
+
+```bash
+export GAMB_PHP_DB_SCAN_ROOTS="/d/ProjetosWeb/wamp64/bin;/d/laragon/bin"
 ```
 
 ## Portfolio de solucoes
@@ -159,4 +204,5 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve
 - Exibe `localhost` na URL por conveniencia, mas continua ouvindo apenas no loopback local.
 - Não expõe na rede.
 - Não altera arquivos do projeto.
+- O modulo de banco so atua quando os novos comandos `gamb-php-db-*` sao executados.
 - Não deve ser usado em produção.

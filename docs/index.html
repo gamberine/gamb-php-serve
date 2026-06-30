@@ -6,7 +6,7 @@
     <title>gamb-php-serve</title>
     <meta
       name="description"
-      content="Dashboard local e apresentacao do gamb-php-serve para gerenciar projetos PHP com Bash, PHP built-in server e fluxo moderno para o dia a dia."
+      content="Dashboard local e apresentacao do gamb-php-serve para gerenciar projetos PHP com Bash, PHP built-in server e modulo opcional de MySQL/MariaDB."
     >
     <link rel="stylesheet" href="./assets/dashboard.css">
   </head>
@@ -170,7 +170,7 @@
               </div>
               <div class="brand-copy">
                 <h1>gamb-php-serve</h1>
-                <p>Gerencie projetos PHP locais com um painel claro, rapido e orientado ao dia a dia.</p>
+                <p>Gerencie projetos PHP locais com painel claro, rapido e um modulo opcional de MySQL/MariaDB.</p>
               </div>
             </div>
 
@@ -211,12 +211,12 @@
           </div>
 
           <section class="action-zone">
-            <div class="section-head">
-              <div>
-                <h2>Acoes rapidas no terminal</h2>
-                <p>Botoes pensados para CMD, PowerShell e Bash. A ponte do VS Code fica preparada para a extensao complementar.</p>
+              <div class="section-head">
+                <div>
+                  <h2>Acoes rapidas no terminal</h2>
+                  <p>Botoes pensados para CMD, PowerShell e Bash, cobrindo projeto e banco local. A ponte do VS Code fica preparada para a extensao complementar.</p>
+                </div>
               </div>
-            </div>
             <div class="action-grid js-action-grid"></div>
             <div class="terminal-panel js-terminal-panel">
               <div class="project-card-header">
@@ -257,7 +257,7 @@
               <p>
                 Uma ferramenta Bash enxuta para registrar, subir, parar, listar e acompanhar seus projetos PHP locais sem
                 acoplar nada ao repositrio. A ideia aqui e simplificar o fluxo diario com uma camada moderna, clara e
-                pronta para evoluir.
+                pronta para evoluir, agora com uma camada opcional de banco para MySQL/MariaDB local.
               </p>
               <div class="hero-links">
                 <a class="pill-link primary" href="https://github.com/gamberine/gamb-php-serve" target="_blank" rel="noreferrer">Ver no GitHub</a>
@@ -281,7 +281,7 @@
               <div class="feature-head">
                 <h3>Gerenciar</h3>
               </div>
-              <p>Inicie, pare, verifique e acompanhe tudo com comandos claros, navegador aberto e painel central.</p>
+              <p>Inicie, pare, verifique e acompanhe tudo com comandos claros, navegador aberto, painel central e banco local opcional.</p>
             </article>
             <article class="feature-card">
               <div class="feature-head">
@@ -299,6 +299,8 @@
                 <code>gamb-php-stop</code>
                 <code>gamb-php-list</code>
                 <code>gamb-php-status --all</code>
+                <code>gamb-php-db-start</code>
+                <code>gamb-php-db-status</code>
                 <code>gamb-php-remove</code>
               </div>
               <p class="support-line">Suporte completo a CMD, PowerShell e Bash pela camada de comandos preparada no painel.</p>
@@ -309,6 +311,7 @@
               <ul>
                 <li>Bash puro para orquestrar o fluxo e manter a instalacao simples.</li>
                 <li>PHP built-in server e router externo para nao tocar no codigo dos projetos.</li>
+                <li>Modulo opcional de MySQL/MariaDB reaproveitando binarios locais ja existentes.</li>
                 <li>JSON legivel no browser para listar projetos, status e acoes locais.</li>
                 <li>Sem Node ou dependencias pesadas na ferramenta principal.</li>
               </ul>

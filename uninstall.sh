@@ -35,7 +35,11 @@ rm -f \
   "$bin_dir/gamb-php-status" \
   "$bin_dir/gamb-php-list" \
   "$bin_dir/gamb-php-remove" \
-  "$bin_dir/gamb-php-check"
+  "$bin_dir/gamb-php-check" \
+  "$bin_dir/gamb-php-db-check" \
+  "$bin_dir/gamb-php-db-status" \
+  "$bin_dir/gamb-php-db-start" \
+  "$bin_dir/gamb-php-db-stop"
 
 if [ -f "$bashrc_file" ]; then
   tmp_file="${bashrc_file}.tmp.$$"
@@ -57,4 +61,3 @@ fi
 cat <<'EOF'
 Desinstalação concluída.
 EOF
-

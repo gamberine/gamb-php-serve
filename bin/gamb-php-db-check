@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  export GAMB_PHP_SHARE_DIR="${GAMB_PHP_SHARE_DIR:-$script_dir/../share}"
+  export GAMB_PHP_DASHBOARD_DIR="${GAMB_PHP_DASHBOARD_DIR:-$script_dir/../share/dashboard}"
+  export GAMB_PHP_ASSETS_DIR="${GAMB_PHP_ASSETS_DIR:-$script_dir/../docs/assets}"
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-common.sh"
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-db.sh"
+elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ] && [ -f "$HOME/.config/gamb-php/lib/gamb-php-db.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-db.sh"
+else
+  printf '%s\n' 'Bibliotecas gamb-php-common.sh / gamb-php-db.sh nao encontradas.' >&2
+  exit 1
+fi
+
+case "${1:-}" in
+  --help|-h)
+    gamb_php_db_print_usage_check
+    exit 0
+    ;;
+  "")
+    ;;
+  *)
+    printf 'Argumento desconhecido: %s\n' "$1" >&2
+    exit 1
+    ;;
+esac
+
+gamb_php_ensure_dirs
+gamb_php_db_check
