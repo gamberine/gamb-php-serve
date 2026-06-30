@@ -21,11 +21,21 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    env:
+      PAGES_ADMIN_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Pages with optional enablement
+        if: ${{ env.PAGES_ADMIN_TOKEN != '' }}
+        uses: actions/configure-pages@v5
+        with:
+          token: ${{ env.PAGES_ADMIN_TOKEN }}
+          enablement: true
+
       - name: Setup Pages
+        if: ${{ env.PAGES_ADMIN_TOKEN == '' }}
         uses: actions/configure-pages@v5
 
       - name: Upload artifact

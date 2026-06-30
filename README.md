@@ -96,6 +96,13 @@ gamb-php-serve --port 8081
 
 O repositorio agora inclui uma landing em `docs/index.html` e o workflow `.github/workflows/pages.yml` para publicar a apresentacao do `gamb-php-serve` usando a mesma linguagem visual do painel local.
 
+Se o repositorio ainda nao tiver GitHub Pages habilitado, a primeira execucao do workflow pode falhar com
+`Not Found` ao consultar a API de Pages. Nesse caso, existem dois caminhos validos:
+
+1. habilitar o Pages em `Settings > Pages` e selecionar `GitHub Actions`;
+2. criar o secret `GH_PAGES_TOKEN` com permissao administrativa no repositorio para que o workflow tente
+   fazer a enablement automaticamente.
+
 ## Diretórios usados
 
 - `~/.local/bin`
