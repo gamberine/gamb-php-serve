@@ -18,9 +18,14 @@ fi
 
 foreground=0
 port=""
+stop=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
+    --stop)
+      stop=1
+      shift
+      ;;
     --foreground)
       foreground=1
       shift
@@ -42,4 +47,24 @@ while [ $# -gt 0 ]; do
 done
 
 gamb_php_ensure_dirs
+
+if [ "$stop" -eq 1 ]; then
+  rows="$(gamb_php_find_registered_rows_for_cwd "$(gamb_php_current_dir)")" || {
+    printf '%s\n' 'Projeto não registrado nesta pasta.' >&2
+    exit 1
+  }
+
+  while IFS= read -r row; do
+    [ -z "$row" ] && continue
+    IFS=$'\t' read -r slug path type host registered_port docroot index <<EOF
+$row
+EOF
+    gamb_php_stop_project_by_row "$slug" "$host" "$registered_port" >/dev/null 2>&1 || true
+    printf 'Servidor parado: %s\n' "$slug"
+  done <<EOF
+$rows
+EOF
+  exit 0
+fi
+
 gamb_php_start_registered_project "$(gamb_php_current_dir)" "$port" "$foreground" 0

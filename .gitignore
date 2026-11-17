@@ -5,3 +5,6 @@ Thumbs.db
 tmp/
 dist/
 
+AGENTS.md
+.agents/
+.ag-kit-backups/

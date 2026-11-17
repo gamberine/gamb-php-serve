@@ -8,6 +8,7 @@ Inicia o servidor do projeto atual.
 gamb-php-serve
 gamb-php-serve --port 8080
 gamb-php-serve --foreground
+gamb-php-serve --stop
 ```
 
 Ao iniciar manualmente, abre o hub visual do servico em `localhost`.
@@ -33,6 +34,8 @@ Para o projeto atual ou todos os projetos.
 gamb-php-stop
 gamb-php-stop --all
 ```
+
+`gamb-php-serve --stop` e um atalho equivalente para parar o projeto registrado na pasta atual.
 
 ## `gamb-php-list`
 

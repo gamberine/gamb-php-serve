@@ -74,6 +74,7 @@ Ao entrar novamente na pasta do projeto pelo Git Bash, o servidor sobe automatic
 gamb-php-serve
 gamb-php-serve --port 8080
 gamb-php-serve --foreground
+gamb-php-serve --stop
 gamb-php-status
 gamb-php-status --all
 gamb-php-stop
@@ -184,6 +185,8 @@ O hub local e a GitHub Pages ja incluem um bloco dinamico preparado para buscar 
 
 ```bash
 gamb-php-stop
+# Atalho equivalente pelo comando principal
+gamb-php-serve --stop
 ```
 
 ## Como remover um projeto

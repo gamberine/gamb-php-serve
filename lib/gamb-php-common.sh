@@ -1110,6 +1110,7 @@ Uso:
   gamb-php-serve
   gamb-php-serve --port 8080
   gamb-php-serve --foreground
+  gamb-php-serve --stop
   gamb-php-serve --help
 EOF
 }

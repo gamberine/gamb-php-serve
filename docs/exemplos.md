@@ -66,6 +66,7 @@ gamb-php-status --all
 ```bash
 gamb-php-stop
 gamb-php-stop --all
+gamb-php-serve --stop
 ```
 
 ## Remoção

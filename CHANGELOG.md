@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+- Adiciona `gamb-php-serve --stop` como atalho para parar o projeto registrado na pasta atual.
+- Mantem `gamb-php-stop` como comando dedicado e preserva `gamb-php-stop --all` para parada global.
+- Ignora artefatos locais do kit de agentes sem incorporá-los ao repositorio do produto.
+
 ## 0.4.0
 
 - Adiciona a MV2 com modulo opcional de banco para detectar, iniciar, verificar e parar MySQL/MariaDB local.
