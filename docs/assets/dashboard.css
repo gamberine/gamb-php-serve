@@ -1,4 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600;700;800&display=swap");
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/InterVariable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
 
 :root {
   --page-bg: #f7fbff;
@@ -40,7 +46,7 @@ body {
     radial-gradient(circle at top right, rgba(46, 199, 201, 0.1), transparent 22%),
     linear-gradient(180deg, #ffffff 0%, var(--page-bg) 100%);
   color: var(--text);
-  font-family: "Sora", "Segoe UI Variable", "Segoe UI", sans-serif;
+  font-family: "Inter", "Segoe UI Variable", "Segoe UI", sans-serif;
 }
 
 a {
@@ -285,8 +291,43 @@ img {
 }
 
 .project-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
   gap: 16px;
+  overflow-x: auto;
+  padding: 2px 2px 10px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.project-card {
+  scroll-snap-align: start;
+}
+
+.project-carousel {
+  position: relative;
+}
+
+.carousel-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.carousel-button {
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: var(--text);
+  cursor: pointer;
+  padding: 7px 12px;
+}
+
+.carousel-button:hover,
+.carousel-button:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .project-card,

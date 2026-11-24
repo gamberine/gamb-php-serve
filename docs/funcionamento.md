@@ -20,6 +20,10 @@ Recencia de uso:
 
 Esse arquivo auxiliar guarda a ordem recente usada pelo hub visual.
 
+## Descoberta
+
+`gamb-php-discover` procura marcadores de Laravel, WordPress e PHP em raizes locais conhecidas. O modo `--register` grava somente o catalogo do usuario em `~/.config/gamb-php`; os projetos permanecem intocados.
+
 ## Tipos reconhecidos
 
 - `laravel` quando existe `artisan`

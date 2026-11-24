@@ -84,6 +84,15 @@
       executeLabel: "Executar aqui",
     },
     {
+      id: "discover",
+      label: "Descobrir projetos locais",
+      description: "Encontra projetos em Laragon, WAMP, XAMPP ou uma pasta escolhida e registra o catalogo.",
+      icon: "search",
+      scope: "global",
+      command: "gamb-php-discover --register",
+      executeLabel: "Escolher pasta",
+    },
+    {
       id: "status_all",
       label: "Status geral",
       description: "Consulta o estado completo de todos os projetos.",
@@ -125,6 +134,8 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3c-4.56 0-8 1.72-8 4v10c0 2.28 3.44 4 8 4s8-1.72 8-4V7c0-2.28-3.44-4-8-4Zm0 1.5c3.9 0 6.5 1.4 6.5 2.5s-2.6 2.5-6.5 2.5S5.5 8.1 5.5 7 8.1 4.5 12 4.5Zm0 6.5c2.57 0 4.88-.48 6.5-1.33V12c0 1.1-2.6 2.5-6.5 2.5S5.5 13.1 5.5 12V9.67C7.12 10.52 9.43 11 12 11Zm0 8c-3.9 0-6.5-1.4-6.5-2.5v-2.33C7.12 15.02 9.43 15.5 12 15.5s4.88-.48 6.5-1.33v2.33c0 1.1-2.6 2.5-6.5 2.5Z"/></svg>',
     list:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 5.75A1.75 1.75 0 1 1 3.25 7.5 1.75 1.75 0 0 1 5 5.75Zm4 1.25a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10A1 1 0 0 1 9 7Zm0 10a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10A1 1 0 0 1 9 17Zm-4-2.75A1.75 1.75 0 1 1 3.25 16 1.75 1.75 0 0 1 5 14.25Zm0-4.25A1.75 1.75 0 1 1 6.75 11.75 1.75 1.75 0 0 1 5 10Zm4 1.75a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10a1 1 0 0 1-1-1Z"/></svg>',
+    search:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m15.5 14.1 4.2 4.2-1.4 1.4-1.4 1.4-4.2-4.2A7 7 0 1 1 15.5 14.1ZM10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg>',
     status:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 20.25A1.25 1.25 0 0 1 3.75 19V5A1.25 1.25 0 0 1 5 3.75h14A1.25 1.25 0 0 1 20.25 5v14A1.25 1.25 0 0 1 19 20.25Zm.75-1.5h12.5V5.25H5.75ZM8.5 16.5a1 1 0 0 1-1-1v-3a1 1 0 1 1 2 0v3a1 1 0 0 1-1 1Zm3 0a1 1 0 0 1-1-1V9a1 1 0 1 1 2 0v6.5a1 1 0 0 1-1 1Zm3 0a1 1 0 0 1-1-1v-4.5a1 1 0 1 1 2 0v4.5a1 1 0 0 1-1 1Z"/></svg>',
     trash:
@@ -243,8 +254,8 @@
     const projectGrid = qs(".js-project-grid");
     const projectList = qs(".js-project-list");
     const selectedProject = getSelectedProject();
-    const recentProjects = state.projects.slice(0, 4);
-    const otherProjects = state.projects.slice(4);
+    const recentProjects = state.projects.slice(0, 8);
+    const otherProjects = state.projects.slice(8);
 
     if (projectGrid) {
       projectGrid.innerHTML = recentProjects
@@ -332,6 +343,19 @@
 
       if (!otherProjects.length) {
         projectList.innerHTML = '<div class="ghost-note">Os projetos extras aparecerao aqui conforme o catalogo crescer.</div>';
+      }
+    }
+
+    if (projectGrid) {
+      const carousel = qs(".js-project-carousel");
+      if (carousel && !carousel.dataset.bound) {
+        carousel.dataset.bound = "true";
+        carousel.querySelector(".js-carousel-prev")?.addEventListener("click", () => {
+          projectGrid.scrollBy({ left: -(projectGrid.clientWidth || 480), behavior: "smooth" });
+        });
+        carousel.querySelector(".js-carousel-next")?.addEventListener("click", () => {
+          projectGrid.scrollBy({ left: projectGrid.clientWidth || 480, behavior: "smooth" });
+        });
       }
     }
 
@@ -640,6 +664,14 @@
       action: actionId,
       path: project && project.path ? project.path : "",
     };
+
+    if (actionId === "discover") {
+      const root = window.prompt("Pasta para procurar projetos (vazio usa as pastas padrao):", "");
+      if (root === null) {
+        return;
+      }
+      payload.root = root.trim();
+    }
 
     try {
       const response = await fetch(data.api.action, {

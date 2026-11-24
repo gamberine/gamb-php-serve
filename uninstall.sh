@@ -36,6 +36,7 @@ rm -f \
   "$bin_dir/gamb-php-list" \
   "$bin_dir/gamb-php-remove" \
   "$bin_dir/gamb-php-check" \
+  "$bin_dir/gamb-php-discover" \
   "$bin_dir/gamb-php-db-check" \
   "$bin_dir/gamb-php-db-status" \
   "$bin_dir/gamb-php-db-start" \

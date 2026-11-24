@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0
+
+- Adiciona descoberta e registro de projetos locais em Laragon, WAMP, XAMPP e pastas configuradas.
+- Adiciona dashboard de comandos para VS Code e contrato local de integracao com Antigravity.
+- Remove a dependencia de fonte externa do hub e prepara Inter como recurso local.
+- Adiciona carrossel navegavel para projetos recentes e acao de descoberta pelo hub.
+
 ## 0.5.0
 
 - Integra o ciclo de inicializacao do MySQL/MariaDB ao `gamb-php-serve` para WordPress e Laravel com banco local.

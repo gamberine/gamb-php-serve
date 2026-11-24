@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  export GAMB_PHP_SHARE_DIR="${GAMB_PHP_SHARE_DIR:-$script_dir/../share}"
+  export GAMB_PHP_DASHBOARD_DIR="${GAMB_PHP_DASHBOARD_DIR:-$script_dir/../share/dashboard}"
+  export GAMB_PHP_ASSETS_DIR="${GAMB_PHP_ASSETS_DIR:-$script_dir/../docs/assets}"
+  # shellcheck disable=SC1091
+  source "$script_dir/../lib/gamb-php-common.sh"
+elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+else
+  printf '%s\n' 'Biblioteca gamb-php-common.sh não encontrada.' >&2
+  exit 1
+fi
+
+scan_root=""
+max_depth="${GAMB_PHP_PROJECT_SCAN_DEPTH:-3}"
+register=0
+json=0
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --root)
+      scan_root="${2:-}"
+      [ -n "$scan_root" ] || { printf '%s\n' 'Faltou o valor de --root.' >&2; exit 1; }
+      shift 2
+      ;;
+    --max-depth)
+      max_depth="${2:-}"
+      [ "$max_depth" -gt 0 ] 2>/dev/null || { printf '%s\n' 'O valor de --max-depth deve ser positivo.' >&2; exit 1; }
+      shift 2
+      ;;
+    --register)
+      register=1
+      shift
+      ;;
+    --json)
+      json=1
+      shift
+      ;;
+    --help|-h)
+      cat <<'EOF'
+Uso:
+  gamb-php-discover
+  gamb-php-discover --root /d/ProjetosWeb --register
+  gamb-php-discover --max-depth 4 --register
+  gamb-php-discover --json
+EOF
+      exit 0
+      ;;
+    *)
+      printf 'Argumento desconhecido: %s\n' "$1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+gamb_php_ensure_dirs
+
+roots="${scan_root:-$(gamb_php_project_scan_roots)}"
+results=""
+status_label="encontrado"
+[ "$register" -eq 1 ] && status_label="registrado"
+while IFS= read -r root; do
+  [ -n "$root" ] || continue
+  while IFS= read -r project_root; do
+    [ -n "$project_root" ] || continue
+    if [ "$register" -eq 1 ]; then
+      gamb_php_register_project_root "$project_root" >/dev/null
+    fi
+    type_row="$(gamb_php_detect_project_type "$project_root")"
+    IFS=$'\t' read -r project_type docroot index <<EOF
+$type_row
+EOF
+    results="${results}${project_root}\t${project_type}\t${docroot}\t${index}\n"
+  done < <(gamb_php_discover_project_roots "$root" "$max_depth")
+done <<<"$roots"
+
+if [ "$json" -eq 1 ]; then
+  printf '%b' "$results" | awk -F '\t' '
+    function json(value) {
+      gsub(/\\/, "\\\\", value)
+      gsub(/"/, "\\\"", value)
+      gsub(/\r/, "\\r", value)
+      gsub(/\n/, "\\n", value)
+      return value
+    }
+    BEGIN { printf "["; first=1 }
+    NF { if (!first) printf ","; printf "{\"path\":\"%s\",\"type\":\"%s\",\"docroot\":\"%s\",\"index\":\"%s\"}", json($1), json($2), json($3), json($4); first=0 }
+    END { print "]" }'
+else
+  count="$(printf '%b' "$results" | awk 'NF { count++ } END { print count + 0 }')"
+  printf 'Projetos encontrados: %s\n' "$count"
+  printf '%b' "$results" | while IFS=$'\t' read -r project_root project_type docroot index; do
+    [ -n "$project_root" ] || continue
+    printf '%s\t%s\t%s\n' "$project_type" "$project_root" "$status_label"
+  done
+fi

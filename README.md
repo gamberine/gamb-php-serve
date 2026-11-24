@@ -63,6 +63,7 @@ Ao entrar novamente na pasta do projeto pelo Git Bash, o servidor sobe automatic
 - `gamb-php-list`
 - `gamb-php-remove`
 - `gamb-php-check`
+- `gamb-php-discover`
 - `gamb-php-db-check`
 - `gamb-php-db-status`
 - `gamb-php-db-start`
@@ -82,6 +83,7 @@ gamb-php-stop --all
 gamb-php-list
 gamb-php-remove
 gamb-php-remove --with-logs
+gamb-php-discover --register
 gamb-php-db-check
 gamb-php-db-status
 gamb-php-db-start

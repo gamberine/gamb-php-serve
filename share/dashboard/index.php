@@ -554,6 +554,20 @@ function gambHubHandleAction(array $ctx): void
             $meta = "Catalogo de projetos";
             break;
 
+        case "discover":
+            $root = is_array($payload) ? trim((string) ($payload["root"] ?? "")) : "";
+            if ($root !== "") {
+                if (strlen($root) > 4096) {
+                    gambHubJson(["error" => "Pasta muito longa."], 400);
+                    return;
+                }
+                $command = "gamb-php-discover --root " . gambHubBashQuote($root) . " --register";
+            } else {
+                $command = "gamb-php-discover --register";
+            }
+            $meta = "Descoberta de projetos";
+            break;
+
         case "status_all":
             $command = "gamb-php-status --all";
             $meta = "Status geral";
@@ -761,7 +775,13 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
                   <p>Os quatro mais recentes aparecem primeiro. Os demais seguem em uma lista vertical rolavel no bloco lateral.</p>
                 </div>
               </div>
-              <div class="project-grid js-project-grid"></div>
+              <div class="project-carousel js-project-carousel">
+                <div class="carousel-controls" aria-label="Navegacao dos projetos recentes">
+                  <button class="carousel-button js-carousel-prev" type="button" aria-label="Projetos anteriores">Anterior</button>
+                  <button class="carousel-button js-carousel-next" type="button" aria-label="Proximos projetos">Proximo</button>
+                </div>
+                <div class="project-grid js-project-grid"></div>
+              </div>
             </section>
 
             <aside class="project-sidebar">

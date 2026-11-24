@@ -225,6 +225,90 @@ gamb_php_detect_project_type() {
   return 1
 }
 
+gamb_php_default_project_scan_roots() {
+  printf '%s\n' \
+    '/d/laragon/www' \
+    '/c/laragon/www' \
+    '/d/ProjetosWeb/wamp64/www' \
+    '/c/ProjetosWeb/wamp64/www' \
+    '/d/wamp64/www' \
+    '/c/wamp64/www' \
+    '/d/xampp/htdocs' \
+    '/c/xampp/htdocs' \
+    '/d/ProjetosWeb' \
+    '/c/ProjetosWeb'
+}
+
+gamb_php_project_scan_roots() {
+  if [ -n "${GAMB_PHP_PROJECT_SCAN_ROOTS:-}" ]; then
+    printf '%s' "$GAMB_PHP_PROJECT_SCAN_ROOTS" | tr ';' '\n' | awk 'NF && !seen[$0]++'
+    return 0
+  fi
+
+  gamb_php_default_project_scan_roots | awk 'NF && !seen[$0]++'
+}
+
+gamb_php_discover_project_roots() {
+  local scan_root="${1:-}"
+  local max_depth="${2:-3}"
+  local marker=""
+  local candidate=""
+  local root=""
+
+  [ -d "$scan_root" ] || return 0
+  while IFS= read -r marker; do
+    [ -n "$marker" ] || continue
+    case "$(basename "$marker")" in
+      artisan|wp-config.php)
+        candidate="$(dirname "$marker")"
+        ;;
+      index.php)
+        if [ "$(basename "$(dirname "$marker")")" = "public" ]; then
+          candidate="$(dirname "$(dirname "$marker")")"
+        else
+          candidate="$(dirname "$marker")"
+        fi
+        ;;
+      *)
+        continue
+        ;;
+    esac
+
+    root="$(gamb_php_norm_path "$candidate")"
+    if gamb_php_detect_project_type "$root" >/dev/null 2>&1; then
+      printf '%s\n' "$root"
+    fi
+  done < <(
+    find "$scan_root" -maxdepth "$max_depth" \
+      \( -path '*/wp-admin' -o -path '*/wp-content' -o -path '*/wp-includes' \) -prune -o \
+      -type f \
+      \( -name 'artisan' -o -name 'wp-config.php' -o -path '*/public/index.php' -o -name 'index.php' \) \
+      -print 2>/dev/null
+  ) | awk 'NF && !seen[$0]++' | sort -f
+}
+
+gamb_php_register_project_root() {
+  local root="${1:-}"
+  local type_row=""
+  local type=""
+  local docroot=""
+  local index=""
+  local host="127.0.0.1"
+  local port="8000"
+  local slug=""
+
+  [ -n "$root" ] || return 1
+  root="$(gamb_php_norm_path "$root")"
+  type_row="$(gamb_php_detect_project_type "$root" 2>/dev/null || true)"
+  [ -n "$type_row" ] || return 1
+  IFS=$'\t' read -r type docroot index <<EOF
+$type_row
+EOF
+  slug="$(gamb_php_slug_for_instance "$(gamb_php_slug_from_path "$root")" "$port")"
+  gamb_php_registry_upsert_row "$slug" "$root" "$type" "$host" "$port" "$docroot" "$index"
+  printf '%s\t%s\t%s\t%s\n' "$slug" "$root" "$type" "$port"
+}
+
 gamb_php_read_registry_rows() {
   if [ ! -f "$gamb_php_projects_file" ]; then
     return 0
@@ -1235,6 +1319,7 @@ gamb_php_help_text_common() {
 Comandos:
   gamb-php-serve
   gamb-php-auto
+  gamb-php-discover
   gamb-php-stop
   gamb-php-status
   gamb-php-list

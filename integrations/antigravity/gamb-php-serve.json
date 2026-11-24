@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "gamb-php-serve",
+  "name": "Gamb PHP Serve",
+  "transport": "terminal",
+  "workspaceCommand": "gamb-php-serve",
+  "allowlistedCommands": [
+    "gamb-php-serve",
+    "gamb-php-serve --stop",
+    "gamb-php-discover --register",
+    "gamb-php-db-check",
+    "gamb-php-db-status",
+    "gamb-php-db-start",
+    "gamb-php-db-stop"
+  ],
+  "dashboardUri": "vscode://gamberine.gamb-php-serve/terminal",
+  "secrets": false,
+  "externalDependencies": []
+}

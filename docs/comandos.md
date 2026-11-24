@@ -62,6 +62,16 @@ Mostra informações do ambiente atual.
 gamb-php-check
 ```
 
+## `gamb-php-discover`
+
+Descobre projetos PHP em pastas locais e, com `--register`, adiciona-os ao catalogo do hub sem alterar os arquivos dos projetos.
+
+```bash
+gamb-php-discover
+gamb-php-discover --root /d/ProjetosWeb --register
+gamb-php-discover --json
+```
+
 ## `gamb-php-db-check`
 
 Descobre instalacoes locais de MySQL/MariaDB e mostra o perfil sugerido.

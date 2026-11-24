@@ -1,0 +1,40 @@
+{
+  "name": "gamb-php-serve-vscode",
+  "displayName": "Gamb PHP Serve",
+  "description": "Dashboard local e comandos do gamb-php-serve para projetos PHP.",
+  "version": "0.6.0",
+  "publisher": "gamberine",
+  "license": "MIT",
+  "engines": {
+    "vscode": ">=1.85.0"
+  },
+  "categories": ["Other"],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:gambPhpServe.openDashboard",
+    "onCommand:gambPhpServe.start",
+    "onCommand:gambPhpServe.stop",
+    "onCommand:gambPhpServe.discover",
+    "onCommand:gambPhpServe.dbStatus",
+    "onUri"
+  ],
+  "contributes": {
+    "commands": [
+      { "command": "gambPhpServe.openDashboard", "title": "Gamb PHP Serve: Abrir dashboard" },
+      { "command": "gambPhpServe.start", "title": "Gamb PHP Serve: Iniciar projeto" },
+      { "command": "gambPhpServe.stop", "title": "Gamb PHP Serve: Parar projeto" },
+      { "command": "gambPhpServe.discover", "title": "Gamb PHP Serve: Descobrir projetos" },
+      { "command": "gambPhpServe.dbStatus", "title": "Gamb PHP Serve: Status do banco" }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "gambPhpServe", "title": "Gamb PHP Serve", "icon": "resources/database.svg" }
+      ]
+    },
+    "views": {
+      "gambPhpServe": [
+        { "id": "gambPhpServe.dashboard", "name": "Dashboard" }
+      ]
+    }
+  }
+}

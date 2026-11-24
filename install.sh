@@ -35,6 +35,7 @@ files_bin=(
   "bin/gamb-php-list"
   "bin/gamb-php-remove"
   "bin/gamb-php-check"
+  "bin/gamb-php-discover"
   "bin/gamb-php-db-check"
   "bin/gamb-php-db-status"
   "bin/gamb-php-db-start"
@@ -51,6 +52,7 @@ files_share=(
   "docs/assets/dashboard.css"
   "docs/assets/dashboard.js"
   "docs/assets/hero-illustration.png"
+  "docs/assets/fonts/InterVariable.woff2"
 )
 
 ensure_dirs() {
@@ -175,7 +177,14 @@ main() {
         copy_local_or_remote "$rel_path" "$dest_dashboard_dir/$(basename "$rel_path")"
         ;;
       docs/assets/*)
-        copy_local_or_remote "$rel_path" "$dest_assets_dir/$(basename "$rel_path")"
+        asset_dest="$dest_assets_dir/$(basename "$rel_path")"
+        case "$rel_path" in
+          docs/assets/fonts/*)
+            mkdir -p "$dest_assets_dir/fonts"
+            asset_dest="$dest_assets_dir/fonts/$(basename "$rel_path")"
+            ;;
+        esac
+        copy_local_or_remote "$rel_path" "$asset_dest"
         ;;
     esac
   done
