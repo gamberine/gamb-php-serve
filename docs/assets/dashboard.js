@@ -75,6 +75,24 @@
       danger: true,
     },
     {
+      id: "wp_install",
+      label: "Preparar WordPress",
+      description: "Copia uma instalacao local para um destino novo e gera o wp-config.php.",
+      icon: "wordpress",
+      scope: "global",
+      command: "gamb-php-wp-install",
+      executeLabel: "Informar destino",
+    },
+    {
+      id: "wp_move_plan",
+      label: "Planejar movimentacao",
+      description: "Valida origem e destino sem copiar arquivos ou alterar o banco.",
+      icon: "arrow",
+      scope: "project",
+      command: "gamb-php-wp-move",
+      executeLabel: "Informar destino",
+    },
+    {
       id: "list",
       label: "Listar projetos",
       description: "Mostra todos os projetos implantados localmente.",
@@ -132,6 +150,8 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.75A10.25 10.25 0 1 0 22.25 12 10.26 10.26 0 0 0 12 1.75Zm3 13.25a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1Z"/></svg>',
     database:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3c-4.56 0-8 1.72-8 4v10c0 2.28 3.44 4 8 4s8-1.72 8-4V7c0-2.28-3.44-4-8-4Zm0 1.5c3.9 0 6.5 1.4 6.5 2.5s-2.6 2.5-6.5 2.5S5.5 8.1 5.5 7 8.1 4.5 12 4.5Zm0 6.5c2.57 0 4.88-.48 6.5-1.33V12c0 1.1-2.6 2.5-6.5 2.5S5.5 13.1 5.5 12V9.67C7.12 10.52 9.43 11 12 11Zm0 8c-3.9 0-6.5-1.4-6.5-2.5v-2.33C7.12 15.02 9.43 15.5 12 15.5s4.88-.48 6.5-1.33v2.33c0 1.1-2.6 2.5-6.5 2.5Z"/></svg>',
+    wordpress:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.25A9.75 9.75 0 1 0 21.75 12 9.76 9.76 0 0 0 12 2.25Zm0 1.5a8.2 8.2 0 0 1 5.9 2.5 7.9 7.9 0 0 0-3.1.7 1.25 1.25 0 1 0-1.1 2.25c.9.45 1.4 1.3 1.4 2.3 0 .6-.2 1.25-.5 1.95l-.65 1.7-2.25-6.7h.75a.75.75 0 1 0 0-1.5H8.8a.75.75 0 1 0 0 1.5h.7l.9 2.6-1.05 3.15-2.2-6.75A8.24 8.24 0 0 1 12 3.75Zm-8.25 8.3c0-.72.1-1.42.3-2.08l3.15 8.65a8.25 8.25 0 0 1-3.45-6.57Zm8.25 8.2a8.2 8.2 0 0 1-3.1-.6l3.3-9.55 3.45 9.45a8.2 8.2 0 0 1-3.65.7Zm5.2-1.85-2.2-6.2c-.3-.8-.45-1.45-.45-1.95 0-.65.25-1.25.7-1.85a8.25 8.25 0 0 1 1.95 9.99Z"/></svg>',
     list:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 5.75A1.75 1.75 0 1 1 3.25 7.5 1.75 1.75 0 0 1 5 5.75Zm4 1.25a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10A1 1 0 0 1 9 7Zm0 10a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10A1 1 0 0 1 9 17Zm-4-2.75A1.75 1.75 0 1 1 3.25 16 1.75 1.75 0 0 1 5 14.25Zm0-4.25A1.75 1.75 0 1 1 6.75 11.75 1.75 1.75 0 0 1 5 10Zm4 1.75a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H10a1 1 0 0 1-1-1Z"/></svg>',
     search:
@@ -671,6 +691,24 @@
         return;
       }
       payload.root = root.trim();
+    }
+
+    if (actionId === "wp_install") {
+      const source = window.prompt("Pasta de origem do WordPress:", project?.path || "");
+      if (!source) return;
+      const destination = window.prompt("Pasta de destino nova ou vazia:", "");
+      if (!destination) return;
+      const dbName = window.prompt("Nome do banco para o wp-config.php:", "wordpress");
+      if (!dbName) return;
+      payload.source = source.trim();
+      payload.destination = destination.trim();
+      payload.dbName = dbName.trim();
+    }
+
+    if (actionId === "wp_move_plan") {
+      const destination = window.prompt("Pasta de destino para o plano:", "");
+      if (!destination) return;
+      payload.destination = destination.trim();
     }
 
     try {

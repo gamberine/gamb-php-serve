@@ -593,6 +593,39 @@ function gambHubHandleAction(array $ctx): void
             $meta = "Parada do banco local";
             break;
 
+        case "wp_install":
+            $source = trim((string) ($payload["source"] ?? ""));
+            $destination = trim((string) ($payload["destination"] ?? ""));
+            $dbName = trim((string) ($payload["dbName"] ?? ""));
+            if ($source === "" || $destination === "" || $dbName === "") {
+                gambHubJson(["error" => "Origem, destino e nome do banco sao obrigatorios."], 400);
+                return;
+            }
+            if (strlen($source) > 4096 || strlen($destination) > 4096 || strlen($dbName) > 128) {
+                gambHubJson(["error" => "Parametro muito longo."], 400);
+                return;
+            }
+            $command = "gamb-php-wp-install --source " . gambHubBashQuote($source)
+                . " --destination " . gambHubBashQuote($destination)
+                . " --db-name " . gambHubBashQuote($dbName);
+            $meta = "Preparacao WordPress";
+            break;
+
+        case "wp_move_plan":
+            $destination = trim((string) ($payload["destination"] ?? ""));
+            if (!is_array($project) || $destination === "") {
+                gambHubJson(["error" => "Selecione um WordPress e informe o destino."], 400);
+                return;
+            }
+            if (strlen($destination) > 4096) {
+                gambHubJson(["error" => "Destino muito longo."], 400);
+                return;
+            }
+            $command = "gamb-php-wp-move --source " . gambHubBashQuote((string) $project["path"])
+                . " --destination " . gambHubBashQuote($destination);
+            $meta = "Plano de movimentacao WordPress";
+            break;
+
         case "remove":
             $command = "gamb-php-remove";
             $meta = "Remocao do projeto";

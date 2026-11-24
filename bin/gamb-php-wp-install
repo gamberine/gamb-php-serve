@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  export GAMB_PHP_SHARE_DIR="${GAMB_PHP_SHARE_DIR:-$script_dir/../share}"
+  source "$script_dir/../lib/gamb-php-common.sh"
+  source "$script_dir/../lib/gamb-php-wp.sh"
+else
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+  source "$HOME/.config/gamb-php/lib/gamb-php-wp.sh"
+fi
+
+source_root=""; destination=""; db_name=""; db_user="root"
+db_password="${GAMB_PHP_WP_DB_PASSWORD:-}"; db_host="127.0.0.1"; db_port="3306"; prefix="wp_"; force_config=0
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --source) source_root="${2:-}"; shift 2 ;;
+    --destination) destination="${2:-}"; shift 2 ;;
+    --db-name) db_name="${2:-}"; shift 2 ;;
+    --db-user) db_user="${2:-}"; shift 2 ;;
+    --db-host) db_host="${2:-}"; shift 2 ;;
+    --db-port) db_port="${2:-}"; shift 2 ;;
+    --db-prefix) prefix="${2:-}"; shift 2 ;;
+    --force-config) force_config=1; shift ;;
+    --help|-h)
+      printf '%s\n' 'Uso: gamb-php-wp-install --source RAIZ_WP --destination NOVA_PASTA --db-name NOME [opcoes]'
+      printf '%s\n' 'Senha: GAMB_PHP_WP_DB_PASSWORD ou entrada interativa. O banco nao e criado por este comando.'
+      exit 0
+      ;;
+    *) printf 'Argumento desconhecido: %s\n' "$1" >&2; exit 1 ;;
+  esac
+done
+
+[ -n "$source_root" ] || { printf '%s\n' 'Faltou --source.' >&2; exit 1; }
+[ -n "$destination" ] || { printf '%s\n' 'Faltou --destination.' >&2; exit 1; }
+[ -n "$db_name" ] || { printf '%s\n' 'Faltou --db-name.' >&2; exit 1; }
+source_root="$(gamb_php_wp_require_root "$source_root")"
+destination="$(gamb_php_norm_path "$destination")"
+case "$destination/" in
+  "$source_root/"*) printf '%s\n' 'O destino nao pode ficar dentro da origem.' >&2; exit 1 ;;
+esac
+gamb_php_wp_destination_is_safe "$destination" || { printf 'Destino existente e nao vazio: %s\n' "$destination" >&2; exit 1; }
+
+if [ -z "$db_password" ] && [ -t 0 ]; then
+  read -r -s -p 'Senha do banco (nao sera exibida): ' db_password
+  printf '\n'
+fi
+
+gamb_php_wp_copy_source "$source_root" "$destination"
+if [ ! -f "$destination/wp-config.php" ] || [ "$force_config" -eq 1 ]; then
+  gamb_php_wp_write_config "$destination" "$db_name" "$db_user" "$db_password" "$db_host" "$db_port" "$prefix"
+fi
+gamb_php_register_project_root "$destination" >/dev/null
+printf 'WordPress preparado em %s\n' "$destination"
+printf 'Banco configurado: %s:%s/%s\n' "$db_host" "$db_port" "$db_name"
+printf '%s\n' 'Proximo passo: importe/crie o banco e valide as URLs e salts antes de publicar.'

@@ -84,6 +84,9 @@ gamb-php-list
 gamb-php-remove
 gamb-php-remove --with-logs
 gamb-php-discover --register
+gamb-php-wp-install --help
+gamb-php-wp-move --help
+gamb-php-db-shell --help
 gamb-php-db-check
 gamb-php-db-status
 gamb-php-db-start
@@ -103,7 +106,33 @@ gamb-php-serve --port 8081
 - Lista lateral rolavel com os demais projetos implantados.
 - Cards com nome, logo/favicon quando existir, URL e status.
 - Acoes rapidas com comandos preparados para CMD, PowerShell e Bash, incluindo a gestao integrada do banco local.
-- Ponte de VS Code pronta para uma extensao complementar futura, com copia de comando como fallback imediato.
+- Extensao VS Code local em `extension/`, com dashboard lateral, comandos de projeto, descoberta e acoes WordPress guiadas.
+
+## WordPress local e movimentacao
+
+Prepare uma nova copia a partir de uma instalacao WordPress local, sem download ou sobrescrita do destino:
+
+```bash
+gamb-php-wp-install --source /d/ProjetosWeb/wordpress --destination /d/ProjetosWeb/novo-site --db-name novo_site
+```
+
+O banco deve ser criado ou importado separadamente. Para planejar uma movimentacao, use o modo simulacao:
+
+```bash
+gamb-php-wp-move --source /d/ProjetosWeb/wordpress --destination /d/ProjetosWeb/novo-site
+gamb-php-wp-move --source /d/ProjetosWeb/wordpress --destination /d/ProjetosWeb/novo-site --execute --include-db
+```
+
+O fluxo remoto nao publica sozinho: ele copia os arquivos, pode exportar `database.sql` e exige revisao de `wp-config.php`, URLs e permissao antes do envio. Isso permite integrar o pacote gerado ao `gamb-duplica-wp` sem acoplar credenciais ou uma API externa.
+
+## Acesso ao banco
+
+Abra o cliente MySQL/MariaDB detectado pelo modulo, com senha solicitada de forma interativa:
+
+```bash
+gamb-php-db-shell
+gamb-php-db-shell --profile mysql-wamp64-8.0.31 --database nome_do_banco
+```
 
 ## GitHub Pages
 

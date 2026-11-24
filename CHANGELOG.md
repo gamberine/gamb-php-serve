@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0
+
+- Adiciona preparacao de instalacoes WordPress a partir de uma copia local, com geracao segura de `wp-config.php`.
+- Adiciona plano de movimentacao WordPress com modo simulacao por padrao e exportacao opcional do banco.
+- Adiciona `gamb-php-db-shell` para abrir o cliente MySQL/MariaDB sem senha na linha de comando.
+- Expande o dashboard local e a extensao VS Code com acoes WordPress guiadas.
+
 ## 0.6.0
 
 - Adiciona descoberta e registro de projetos locais em Laragon, WAMP, XAMPP e pastas configuradas.

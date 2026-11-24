@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  export GAMB_PHP_SHARE_DIR="${GAMB_PHP_SHARE_DIR:-$script_dir/../share}"
+  source "$script_dir/../lib/gamb-php-common.sh"
+  source "$script_dir/../lib/gamb-php-db.sh"
+  source "$script_dir/../lib/gamb-php-wp.sh"
+else
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+  source "$HOME/.config/gamb-php/lib/gamb-php-db.sh"
+  source "$HOME/.config/gamb-php/lib/gamb-php-wp.sh"
+fi
+
+source_root=""; destination=""; execute=0; include_db=0; profile_target="${GAMB_PHP_DB_PROFILE:-}"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --source) source_root="${2:-}"; shift 2 ;;
+    --destination) destination="${2:-}"; shift 2 ;;
+    --execute) execute=1; shift ;;
+    --include-db) include_db=1; shift ;;
+    --profile) profile_target="${2:-}"; shift 2 ;;
+    --help|-h)
+      printf '%s\n' 'Uso: gamb-php-wp-move --source RAIZ_WP --destination PASTA [--execute] [--include-db]'
+      printf '%s\n' 'Sem --execute, apenas valida e gera o plano. Destinos existentes nao sao sobrescritos.'
+      exit 0
+      ;;
+    *) printf 'Argumento desconhecido: %s\n' "$1" >&2; exit 1 ;;
+  esac
+done
+
+[ -n "$source_root" ] || { printf '%s\n' 'Faltou --source.' >&2; exit 1; }
+[ -n "$destination" ] || { printf '%s\n' 'Faltou --destination.' >&2; exit 1; }
+source_root="$(gamb_php_wp_require_root "$source_root")"
+destination="$(gamb_php_norm_path "$destination")"
+case "$destination/" in
+  "$source_root/"*) printf '%s\n' 'O destino nao pode ficar dentro da origem.' >&2; exit 1 ;;
+esac
+gamb_php_wp_destination_is_safe "$destination" || { printf 'Destino existente e nao vazio: %s\n' "$destination" >&2; exit 1; }
+
+printf 'Plano WordPress\nOrigem: %s\nDestino: %s\n' "$source_root" "$destination"
+gamb_php_wp_config_report "$source_root"
+if [ "$execute" -ne 1 ]; then
+  printf '%s\n' 'Modo simulacao: nenhum arquivo ou banco foi alterado.'
+  exit 0
+fi
+
+gamb_php_wp_copy_source "$source_root" "$destination"
+if [ "$include_db" -eq 1 ]; then
+  source_db_name="$(gamb_php_wp_config_value "$source_root" DB_NAME)"
+  source_db_user="$(gamb_php_wp_config_value "$source_root" DB_USER)"
+  source_db_host="$(gamb_php_wp_config_value "$source_root" DB_HOST)"
+  source_db_password="$(gamb_php_wp_config_value "$source_root" DB_PASSWORD)"
+  source_db_port="3306"
+  if [[ "$source_db_host" == *:* && "$source_db_host" != "::1" ]]; then source_db_port="${source_db_host##*:}"; source_db_host="${source_db_host%%:*}"; fi
+  row="$(gamb_php_db_select_any_profile "$profile_target" 2>/dev/null || true)"
+  [ -n "$row" ] || { printf '%s\n' 'Perfil MySQL/MariaDB nao encontrado para exportacao.' >&2; exit 1; }
+  dump_bin="$(gamb_php_wp_dump_binary "$row")" || { printf '%s\n' 'mysqldump/mariadb-dump nao encontrado.' >&2; exit 1; }
+  mkdir -p "$destination"
+  if [ -n "$source_db_password" ]; then
+    MYSQL_PWD="$source_db_password" "$dump_bin" --host="$source_db_host" --port="$source_db_port" --user="$source_db_user" "$source_db_name" > "$destination/database.sql"
+  else
+    "$dump_bin" --host="$source_db_host" --port="$source_db_port" --user="$source_db_user" --password "$source_db_name" > "$destination/database.sql"
+  fi
+  printf 'Banco exportado para %s\n' "$destination/database.sql"
+fi
+gamb_php_register_project_root "$destination" >/dev/null
+printf 'WordPress movido para %s\n' "$destination"
+printf '%s\n' 'Revise wp-config.php, URLs, permissao de arquivos e importacao antes de publicar.'

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
+  source "$script_dir/../lib/gamb-php-common.sh"
+  source "$script_dir/../lib/gamb-php-db.sh"
+else
+  source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+  source "$HOME/.config/gamb-php/lib/gamb-php-db.sh"
+fi
+
+target="${GAMB_PHP_DB_PROFILE:-}"; database="${GAMB_PHP_DB_NAME:-}"; user="${GAMB_PHP_DB_USER:-root}"; host=""; port=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --profile) target="${2:-}"; shift 2 ;;
+    --database|--db) database="${2:-}"; shift 2 ;;
+    --user) user="${2:-}"; shift 2 ;;
+    --host) host="${2:-}"; shift 2 ;;
+    --port) port="${2:-}"; shift 2 ;;
+    --help|-h)
+      printf '%s\n' 'Uso: gamb-php-db-shell [--profile PERFIL] [--database BANCO] [--user USUARIO]'
+      printf '%s\n' 'A senha e solicitada pelo cliente e nunca e colocada na linha de comando.'
+      exit 0
+      ;;
+    *) printf 'Argumento desconhecido: %s\n' "$1" >&2; exit 1 ;;
+  esac
+done
+
+row="$(gamb_php_db_select_any_profile "$target" 2>/dev/null || true)"
+[ -n "$row" ] || { printf '%s\n' 'Nenhum perfil MySQL/MariaDB encontrado.' >&2; exit 1; }
+IFS=$'\t' read -r profile engine label origin server_bin defaults_file profile_port datadir admin_bin basedir log_error state_version <<EOF
+$row
+EOF
+client=""
+for candidate in "$(dirname "$server_bin")/mysql.exe" "$(dirname "$server_bin")/mariadb.exe" "$(dirname "$server_bin")/mysql" "$(dirname "$server_bin")/mariadb" mysql mariadb; do
+  if [ -x "$candidate" ] || command -v "$candidate" >/dev/null 2>&1; then client="$candidate"; break; fi
+done
+[ -n "$client" ] || { printf '%s\n' 'Cliente mysql/mariadb nao encontrado.' >&2; exit 1; }
+host="${host:-127.0.0.1}"; port="${port:-$profile_port}"
+printf 'Abrindo %s em %s:%s\n' "$profile" "$host" "$port"
+args=("--host=$host" "--port=$port" "--user=$user")
+[ -n "$database" ] && args+=("$database")
+exec "$client" "${args[@]}" --password

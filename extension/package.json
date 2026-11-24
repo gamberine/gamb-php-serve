@@ -24,7 +24,9 @@
       { "command": "gambPhpServe.start", "title": "Gamb PHP Serve: Iniciar projeto" },
       { "command": "gambPhpServe.stop", "title": "Gamb PHP Serve: Parar projeto" },
       { "command": "gambPhpServe.discover", "title": "Gamb PHP Serve: Descobrir projetos" },
-      { "command": "gambPhpServe.dbStatus", "title": "Gamb PHP Serve: Status do banco" }
+      { "command": "gambPhpServe.dbStatus", "title": "Gamb PHP Serve: Status do banco" },
+      { "command": "gambPhpServe.wpInstall", "title": "Gamb PHP Serve: Preparar WordPress" },
+      { "command": "gambPhpServe.wpMovePlan", "title": "Gamb PHP Serve: Planejar movimentacao WordPress" }
     ],
     "viewsContainers": {
       "activitybar": [

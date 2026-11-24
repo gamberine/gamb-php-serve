@@ -13,5 +13,7 @@ Instale o projeto globalmente pelo `install.sh` antes de usar os botoes. A exten
 - `Gamb PHP Serve: Parar projeto`
 - `Gamb PHP Serve: Descobrir projetos`
 - `Gamb PHP Serve: Status do banco`
+- `Gamb PHP Serve: Preparar WordPress`
+- `Gamb PHP Serve: Planejar movimentacao WordPress`
 
 A URI `vscode://gamberine.gamb-php-serve/terminal` aceita somente o payload de terminal gerado pelo dashboard local; a extensao nao executa comandos recebidos de rede.

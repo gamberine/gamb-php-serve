@@ -109,6 +109,32 @@ gamb-php-db-stop
 gamb-php-db-stop all
 ```
 
+## `gamb-php-db-shell`
+
+Abre o cliente MySQL/MariaDB detectado, sem armazenar ou expor a senha na linha de comando.
+
+```bash
+gamb-php-db-shell
+gamb-php-db-shell --profile mysql-wamp64-8.0.31 --database nome_do_banco
+```
+
+## `gamb-php-wp-install`
+
+Prepara uma nova instalacao a partir de uma copia local do WordPress. O destino deve ser novo ou vazio.
+
+```bash
+gamb-php-wp-install --source /d/ProjetosWeb/wordpress --destination /d/ProjetosWeb/novo-site --db-name novo_site
+```
+
+## `gamb-php-wp-move`
+
+Gera um plano de movimentacao por padrao. `--execute` copia os arquivos; `--include-db` tambem exporta o banco local quando houver um perfil e cliente de dump disponiveis.
+
+```bash
+gamb-php-wp-move --source /d/ProjetosWeb/wordpress --destination /d/ProjetosWeb/novo-site
+gamb-php-wp-move --source /d/ProjetosWeb/wordpress --destination /d/ProjetosWeb/novo-site --execute --include-db
+```
+
 ## Hub visual
 
 Rota reservada do painel:

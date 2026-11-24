@@ -36,6 +36,9 @@ files_bin=(
   "bin/gamb-php-remove"
   "bin/gamb-php-check"
   "bin/gamb-php-discover"
+  "bin/gamb-php-wp-install"
+  "bin/gamb-php-wp-move"
+  "bin/gamb-php-db-shell"
   "bin/gamb-php-db-check"
   "bin/gamb-php-db-status"
   "bin/gamb-php-db-start"
@@ -45,6 +48,7 @@ files_bin=(
 files_lib=(
   "lib/gamb-php-common.sh"
   "lib/gamb-php-db.sh"
+  "lib/gamb-php-wp.sh"
 )
 
 files_share=(
