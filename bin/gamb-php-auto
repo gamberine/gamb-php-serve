@@ -8,9 +8,17 @@ if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
   export GAMB_PHP_ASSETS_DIR="${GAMB_PHP_ASSETS_DIR:-$script_dir/../docs/assets}"
   # shellcheck disable=SC1091
   source "$script_dir/../lib/gamb-php-common.sh"
+  if [ -f "$script_dir/../lib/gamb-php-db.sh" ]; then
+    # shellcheck disable=SC1091
+    source "$script_dir/../lib/gamb-php-db.sh"
+  fi
 elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
   # shellcheck disable=SC1091
   source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+  if [ -f "$HOME/.config/gamb-php/lib/gamb-php-db.sh" ]; then
+    # shellcheck disable=SC1091
+    source "$HOME/.config/gamb-php/lib/gamb-php-db.sh"
+  fi
 else
   exit 0
 fi
@@ -23,4 +31,8 @@ case "${1:-}" in
 esac
 
 gamb_php_ensure_dirs
+if declare -F gamb_php_db_auto_start_for_project >/dev/null 2>&1; then
+  project_root="$(gamb_php_detect_project_root 2>/dev/null || true)"
+  gamb_php_db_auto_start_for_project "$project_root" >/dev/null 2>&1 || exit 1
+fi
 gamb_php_start_registered_project "$(gamb_php_current_dir)" "" 0 1 >/dev/null 2>&1 || true

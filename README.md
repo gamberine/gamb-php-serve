@@ -16,7 +16,7 @@ Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAM
 - Detecta Laravel, WordPress, PHP com `public/` e PHP simples.
 - Respeita prefixos locais como `/admin` e `/extranet` quando definidos no `config/local.php`.
 - Permite subir outra instância manual do mesmo projeto em outra janela usando apenas `--port`.
-- Inclui um modulo opcional de banco para iniciar e parar MySQL/MariaDB local sem acoplar isso ao fluxo atual do `serve`.
+- Integra MySQL/MariaDB local ao fluxo do `serve` para WordPress e Laravel, sem exigir Laragon ou WAMP aberto.
 
 ## Instalação em uma linha
 
@@ -100,7 +100,7 @@ gamb-php-serve --port 8081
 - Grid com os 4 projetos mais recentes.
 - Lista lateral rolavel com os demais projetos implantados.
 - Cards com nome, logo/favicon quando existir, URL e status.
-- Acoes rapidas com comandos preparados para CMD, PowerShell e Bash, incluindo o modulo opcional de banco.
+- Acoes rapidas com comandos preparados para CMD, PowerShell e Bash, incluindo a gestao integrada do banco local.
 - Ponte de VS Code pronta para uma extensao complementar futura, com copia de comando como fallback imediato.
 
 ## GitHub Pages
@@ -128,9 +128,11 @@ Se você usa PHP portátil, defina:
 export GAMB_PHP_BIN="/d/tools/php/php.exe"
 ```
 
-## Modulo de banco opcional
+## Integracao MySQL/MariaDB
 
-O `gamb-php-serve` continua funcionando sem banco local. A MV2 apenas adiciona comandos paralelos para detectar e orquestrar MySQL/MariaDB quando houver binarios locais disponiveis.
+Para WordPress e Laravel configurados com MySQL/MariaDB local, `gamb-php-serve` inicia o banco diretamente pelos binarios detectados. Nao e necessario abrir Laragon, WAMP ou outro painel em paralelo.
+
+O banco ainda precisa estar instalado na maquina. O `gamb-php-serve` gerencia o processo do servidor, o PID, os logs e a parada sem iniciar a interface do pacote.
 
 Fluxo rapido:
 
@@ -149,7 +151,11 @@ gamb-php-db-start mariadb
 gamb-php-db-stop all
 ```
 
-O modulo nao altera o comportamento atual do `gamb-php-serve` e nao faz auto-start de banco ao entrar no projeto.
+Projetos com banco remoto nao acionam banco local. Para desativar a inicializacao automatica:
+
+```bash
+export GAMB_PHP_DB_AUTO_START=0
+```
 
 ## Variaveis opcionais
 
@@ -207,5 +213,5 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve
 - Exibe `localhost` na URL por conveniencia, mas continua ouvindo apenas no loopback local.
 - Não expõe na rede.
 - Não altera arquivos do projeto.
-- O modulo de banco so atua quando os novos comandos `gamb-php-db-*` sao executados.
+- O modulo inicia automaticamente o banco local exigido por WordPress/Laravel e preserva bancos remotos.
 - Não deve ser usado em produção.

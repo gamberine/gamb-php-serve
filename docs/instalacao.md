@@ -38,7 +38,7 @@ bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/gamberine/gamb-php-serve@main/
 - Cria `~/.local/state/gamb-php/db/meta`.
 - Cria `~/.config/gamb-php/share/dashboard`.
 - Cria `~/.config/gamb-php/share/assets`.
-- Copia os scripts globais de projeto e do modulo opcional de banco.
+- Copia os scripts globais de projeto e da gestao integrada de banco.
 - Copia o hub local e os assets visuais.
 - Adiciona `~/.local/bin` no `~/.bashrc`.
 - Adiciona o hook de auto-start no `~/.bashrc`.
@@ -53,9 +53,9 @@ http://localhost:PORTA/__gamb_php__/hub
 
 A URL principal do projeto continua sendo impressa no terminal e fica acessivel no primeiro card do painel.
 
-## Modulo opcional de banco
+## Integracao MySQL/MariaDB
 
-Depois da instalacao, o modulo MySQL/MariaDB fica disponivel sem alterar o uso atual do `gamb-php-serve`:
+Depois da instalacao, o `gamb-php-serve` gerencia diretamente um MySQL/MariaDB local detectado:
 
 ```bash
 gamb-php-db-check
@@ -63,3 +63,5 @@ gamb-php-db-start
 gamb-php-db-status
 gamb-php-db-stop
 ```
+
+Nao e necessario iniciar Laragon, WAMP ou outro programa em paralelo. Os binarios do MySQL/MariaDB precisam existir na maquina; o painel do pacote nao precisa estar aberto.

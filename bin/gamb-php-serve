@@ -8,9 +8,17 @@ if [ -f "$script_dir/../lib/gamb-php-common.sh" ]; then
   export GAMB_PHP_ASSETS_DIR="${GAMB_PHP_ASSETS_DIR:-$script_dir/../docs/assets}"
   # shellcheck disable=SC1091
   source "$script_dir/../lib/gamb-php-common.sh"
+  if [ -f "$script_dir/../lib/gamb-php-db.sh" ]; then
+    # shellcheck disable=SC1091
+    source "$script_dir/../lib/gamb-php-db.sh"
+  fi
 elif [ -f "$HOME/.config/gamb-php/lib/gamb-php-common.sh" ]; then
   # shellcheck disable=SC1091
   source "$HOME/.config/gamb-php/lib/gamb-php-common.sh"
+  if [ -f "$HOME/.config/gamb-php/lib/gamb-php-db.sh" ]; then
+    # shellcheck disable=SC1091
+    source "$HOME/.config/gamb-php/lib/gamb-php-db.sh"
+  fi
 else
   printf '%s\n' 'Biblioteca gamb-php-common.sh não encontrada.' >&2
   exit 1
@@ -65,6 +73,11 @@ EOF
 $rows
 EOF
   exit 0
+fi
+
+if declare -F gamb_php_db_auto_start_for_project >/dev/null 2>&1; then
+  project_root="$(gamb_php_detect_project_root 2>/dev/null || true)"
+  gamb_php_db_auto_start_for_project "$project_root"
 fi
 
 gamb_php_start_registered_project "$(gamb_php_current_dir)" "$port" "$foreground" 0

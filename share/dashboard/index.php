@@ -737,7 +737,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
               </div>
               <div class="brand-copy">
                 <h1>gamb-php-serve</h1>
-                <p>Hub local para projetos PHP com gestao visual, URLs prontas e modulo opcional de MySQL/MariaDB.</p>
+                <p>Hub local para projetos PHP com gestao visual, URLs prontas e MySQL/MariaDB local integrado.</p>
               </div>
             </div>
 
@@ -822,7 +822,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
               <p>
                 Uma camada visual moderna sobre o motor Bash do serve. A proposta continua a mesma: nao tocar nos projetos,
                 centralizar a configuracao no usuario e manter um fluxo rapido para iniciar, parar, listar e abrir
-                ambientes locais sem ruido, agora com um modulo paralelo para MySQL/MariaDB quando fizer sentido.
+                ambientes locais sem ruido, agora com MySQL/MariaDB gerenciado diretamente quando o projeto exigir.
               </p>
               <div class="hero-links">
                 <a class="pill-link primary" href="<?= gambHubEscape($repoUrl) ?>" target="_blank" rel="noreferrer">Ver no GitHub</a>
@@ -870,7 +870,7 @@ $pageData["currentProjectPath"] = gambHubCurrentProjectPath($pageData["samplePro
               <ul>
                 <li>Bash puro para instalacao, descoberta de ambiente e orquestracao do ciclo local.</li>
                 <li>PHP built-in server com router externo para nao criar arquivos nos projetos do usuario.</li>
-                <li>Modulo opcional de MySQL/MariaDB reaproveitando instalacoes locais ja existentes.</li>
+                <li>MySQL/MariaDB gerenciado diretamente pelos binarios locais, sem abrir Laragon ou WAMP.</li>
                 <li>HTML, CSS e JavaScript sem build pesado para a camada visual e para a GitHub Pages.</li>
                 <li>Camada opcional de IA no design e no polimento, sem acoplar dependencias ao uso final.</li>
               </ul>

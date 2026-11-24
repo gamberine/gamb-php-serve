@@ -1087,6 +1087,67 @@ EOF
   return 1
 }
 
+gamb_php_db_auto_start_for_project() {
+  local root="${1:-}"
+  local requirement=""
+  local requirement_mode=""
+  local engine=""
+  local target=""
+  local db_host=""
+  local db_port=""
+  local row=""
+  local profile=""
+  local port=""
+  local state_kind=""
+  local pid=""
+
+  [ "${GAMB_PHP_DB_AUTO_START:-1}" != "0" ] || return 0
+  [ -n "$root" ] || return 0
+
+  requirement="$(gamb_php_project_db_requirement "$root" 2>/dev/null || true)"
+  IFS=$'\t' read -r requirement_mode engine db_host db_port <<EOF
+$requirement
+EOF
+  [ "$requirement_mode" = "local" ] || return 0
+
+  target="$engine"
+  if [ "$target" = "auto" ] && [ -n "${GAMB_PHP_DB_PROFILE:-}" ]; then
+    target="$GAMB_PHP_DB_PROFILE"
+  fi
+
+  gamb_php_db_ensure_dirs
+  if [ -z "${GAMB_PHP_DB_PROFILE:-}" ] && [ -n "$db_port" ]; then
+    row="$(gamb_php_db_detect_profiles | awk -F '\t' -v expected_port="$db_port" '$7 == expected_port' | gamb_php_db_select_profile_from_stream "$target" 2>/dev/null || true)"
+  fi
+  row="${row:-$(gamb_php_db_select_detected_profile "$target" 2>/dev/null || true)}"
+  if [ -z "$row" ]; then
+    printf 'Banco local exigido pelo projeto nao foi encontrado para %s:%s.\n' "$db_host" "$db_port" >&2
+    printf '%s\n' 'Instale ou configure um perfil MySQL/MariaDB antes de iniciar o projeto.' >&2
+    return 1
+  fi
+
+  IFS=$'\t' read -r profile _engine _label _origin _server_bin _defaults_file port _datadir _admin_bin _basedir _log_error _version <<EOF
+$row
+EOF
+  if [ -n "${GAMB_PHP_DB_PROFILE:-}" ] && [ -n "$db_port" ] && [ "$port" != "$db_port" ]; then
+    printf 'O perfil %s usa a porta %s, mas o projeto exige %s.\n' "$profile" "$port" "$db_port" >&2
+    printf '%s\n' 'Ajuste DB_HOST/DB_PORT do projeto ou escolha um perfil com a mesma porta.' >&2
+    return 1
+  fi
+  IFS=$'\t' read -r state_kind pid <<EOF
+$(gamb_php_db_running_state_for_profile "$profile" "$port")
+EOF
+
+  case "$state_kind" in
+    managed|external)
+      return 0
+      ;;
+  esac
+
+  printf 'Iniciando banco local para o projeto (%s)...\n' "$profile"
+  gamb_php_db_start "$target"
+}
+
 gamb_php_db_managed_profiles() {
   local pid_file=""
   if [ ! -d "$gamb_php_db_pids_dir" ]; then

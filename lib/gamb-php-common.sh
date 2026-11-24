@@ -1064,6 +1064,71 @@ gamb_php_extract_define_value() {
   sed -En "s/^[[:space:]]*define\\([[:space:]]*['\\\"]${define_name}['\\\"][[:space:]]*,[[:space:]]*['\\\"]([^'\\\"]*)['\\\"].*/\\1/p" "$file_path" | head -n 1
 }
 
+gamb_php_extract_env_value() {
+  local file_path="${1:-}"
+  local key="${2:-}"
+  local value=""
+
+  [ -f "$file_path" ] || return 1
+  value="$(sed -En "s/^[[:space:]]*${key}[[:space:]]*=[[:space:]]*([^#]*).*/\\1/p" "$file_path" | head -n 1)"
+  value="$(printf '%s' "$value" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^['\"]//; s/['\"]$//')"
+  [ -n "$value" ] || return 1
+  printf '%s\n' "$value"
+}
+
+gamb_php_project_db_requirement() {
+  local root="${1:-}"
+  local type_row=""
+  local type=""
+  local db_host=""
+  local db_connection=""
+  local host_name=""
+  local db_port=""
+
+  [ -n "$root" ] || return 1
+  type_row="$(gamb_php_detect_project_type "$root" 2>/dev/null || true)"
+  IFS=$'\t' read -r type _docroot _index <<EOF
+$type_row
+EOF
+
+  case "$type" in
+    wordpress)
+      db_host="$(gamb_php_extract_define_value "$root/wp-config.php" "DB_HOST" 2>/dev/null || true)"
+      db_host="${db_host:-localhost}"
+      db_port="3306"
+      ;;
+    laravel)
+      db_connection="$(gamb_php_extract_env_value "$root/.env" "DB_CONNECTION" 2>/dev/null || true)"
+      case "${db_connection,,}" in
+        mysql|mariadb) ;;
+        *) printf '%s\n' 'none'; return 0 ;;
+      esac
+      db_host="$(gamb_php_extract_env_value "$root/.env" "DB_HOST" 2>/dev/null || true)"
+      db_host="${db_host:-127.0.0.1}"
+      db_port="$(gamb_php_extract_env_value "$root/.env" "DB_PORT" 2>/dev/null || true)"
+      db_port="${db_port:-3306}"
+      ;;
+    *)
+      printf '%s\n' 'none'
+      return 0
+      ;;
+  esac
+
+  host_name="${db_host%%:*}"
+  if [[ "$db_host" == *:* && "$host_name" != "::1" ]]; then
+    db_port="${db_host##*:}"
+  fi
+  [[ "$db_port" =~ ^[0-9]+$ ]] || db_port="3306"
+  case "${host_name,,}" in
+    localhost|127.0.0.1|::1)
+      printf 'local\t%s\t%s\t%s\n' "${db_connection:-auto}" "$db_host" "$db_port"
+      ;;
+    *)
+      printf 'remote\t%s\t%s\t%s\n' "${db_connection:-auto}" "$db_host" "$db_port"
+      ;;
+  esac
+}
+
 gamb_php_detect_base_path() {
   local root="${1:-}"
   local config_file=""

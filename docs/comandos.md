@@ -82,7 +82,7 @@ gamb-php-db-status mariadb
 
 ## `gamb-php-db-start`
 
-Inicia o perfil sugerido ou um engine especifico, sem acoplar o banco ao `gamb-php-serve`.
+Inicia manualmente um perfil MySQL/MariaDB. Para WordPress e Laravel com banco local, o `gamb-php-serve` faz essa etapa automaticamente.
 
 ```bash
 gamb-php-db-start

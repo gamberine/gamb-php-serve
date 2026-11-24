@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0
+
+- Integra o ciclo de inicializacao do MySQL/MariaDB ao `gamb-php-serve` para WordPress e Laravel com banco local.
+- Inicia os binarios diretamente, sem exigir Laragon, WAMP ou outro painel aberto em paralelo.
+- Mantem bancos remotos intocados e bloqueia o PHP quando o banco local obrigatorio nao esta disponivel.
+- Adiciona `GAMB_PHP_DB_AUTO_START=0` para desativar o comportamento automatico.
+
 ## 0.4.1
 
 - Adiciona `gamb-php-serve --stop` como atalho para parar o projeto registrado na pasta atual.

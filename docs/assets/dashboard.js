@@ -49,7 +49,7 @@
     {
       id: "db_start",
       label: "Iniciar banco local",
-      description: "Sobe o perfil sugerido do modulo opcional de banco.",
+      description: "Sobe diretamente o perfil local sem abrir Laragon ou WAMP.",
       icon: "play",
       scope: "global",
       command: "gamb-php-db-start",

@@ -51,9 +51,9 @@ Essa rota entrega:
 - acoes rapidas com comandos por shell para projeto e banco local;
 - area de retorno para acoes executadas localmente.
 
-## Banco opcional (MV2)
+## Integracao MySQL/MariaDB (MV2)
 
-O modulo de banco roda em paralelo ao fluxo PHP e so atua quando um comando `gamb-php-db-*` e chamado.
+O modulo de banco e carregado pelo `gamb-php-serve` e atua antes do PHP quando o projeto e WordPress ou Laravel com banco local.
 
 O objetivo e reaproveitar binarios locais de MySQL/MariaDB, detectando perfis por configuracoes como `my.ini` e mantendo o estado do modulo em:
 
@@ -63,11 +63,12 @@ O objetivo e reaproveitar binarios locais de MySQL/MariaDB, detectando perfis po
 
 Regras da MV2:
 
-- nao inicia banco automaticamente ao entrar no projeto;
-- nao altera o comportamento atual de `gamb-php-serve`;
+- inicia o servidor MySQL/MariaDB diretamente, sem abrir Laragon, WAMP ou outro painel;
+- bloqueia o PHP se o banco local exigido nao for encontrado ou nao puder iniciar;
+- preserva projetos configurados com banco remoto, sem iniciar um banco local;
 - prioriza um perfil padrao, mas aceita `mysql`, `mariadb` ou `--profile`;
 - nao derruba um banco externo que nao tenha sido iniciado pelo proprio modulo.
 
 ## Auto-start
 
-O instalador adiciona um hook no `~/.bashrc` que chama `gamb-php-auto` no prompt. Quando a pasta atual coincide com um projeto registrado e o servidor não está rodando, ele sobe silenciosamente.
+O instalador adiciona um hook no `~/.bashrc` que chama `gamb-php-auto` no prompt. Quando a pasta atual coincide com um projeto registrado e o servidor não está rodando, ele prepara o banco local exigido e sobe silenciosamente.
