@@ -71,6 +71,12 @@ Regras da MV2:
 - bloqueia o PHP se o banco local exigido nao for encontrado ou nao puder iniciar;
 - preserva projetos configurados com banco remoto, sem iniciar um banco local;
 - prioriza um perfil padrao, mas aceita `mysql`, `mariadb` ou `--profile`;
+
+## WordPress e banco
+
+O toolkit WordPress trabalha somente com fontes locais: `gamb-php-wp-install` copia uma instalacao para um destino novo e gera o `wp-config.php`; `gamb-php-wp-move` gera um plano de movimentacao e so copia quando `--execute` e informado. A exportacao do banco e opcional com `--include-db`.
+
+Para acesso pratico ao banco, `gamb-php-db-shell` localiza o cliente MySQL/MariaDB junto ao perfil detectado e solicita a senha interativamente. Isso evita depender de HeidiSQL para o fluxo basico.
 - nao derruba um banco externo que nao tenha sido iniciado pelo proprio modulo.
 
 ## Auto-start
