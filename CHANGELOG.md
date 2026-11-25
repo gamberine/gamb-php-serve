@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.2
+
+- Adiciona empacotamento VSIX sem `npm` ou `vsce`.
+- Instala e valida a extensao `gamberine.gamb-php-serve-vscode` no VS Code local.
+
 ## 0.7.0
 
 - Adiciona preparacao de instalacoes WordPress a partir de uma copia local, com geracao segura de `wp-config.php`.

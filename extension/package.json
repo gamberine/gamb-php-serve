@@ -2,7 +2,7 @@
   "name": "gamb-php-serve-vscode",
   "displayName": "Gamb PHP Serve",
   "description": "Dashboard local e comandos do gamb-php-serve para projetos PHP.",
-  "version": "0.6.0",
+  "version": "0.7.2",
   "publisher": "gamberine",
   "license": "MIT",
   "engines": {
