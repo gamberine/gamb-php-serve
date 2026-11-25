@@ -349,6 +349,42 @@ img {
   min-height: 240px;
 }
 
+.manual-page {
+  min-height: 100vh;
+}
+
+.manual-hero {
+  max-width: 860px;
+  padding: 54px 0 30px;
+}
+
+.manual-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.manual-grid code {
+  display: block;
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #102752;
+  color: #dff7f0;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.manual-security,
+.manual-next {
+  margin-top: 22px;
+  padding: 26px;
+}
+
+.manual-security li {
+  margin: 8px 0;
+}
+
 .project-card.is-current {
   border-color: rgba(37, 110, 240, 0.22);
   box-shadow: 0 18px 38px rgba(37, 110, 240, 0.14);
@@ -991,6 +1027,10 @@ img {
   .action-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .manual-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
@@ -1008,7 +1048,8 @@ img {
   .action-grid,
   .feature-grid,
   .section-cards,
-  .portfolio-grid {
+  .portfolio-grid,
+  .manual-grid {
     grid-template-columns: 1fr;
   }
 

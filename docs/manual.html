@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manual | gamb-php-serve</title>
+    <meta name="description" content="Manual de operacao segura e pratica do gamb-php-serve.">
+    <link rel="stylesheet" href="./assets/dashboard.css">
+  </head>
+  <body>
+    <main class="page-shell"><div class="page-wrap"><section class="marketing-surface manual-page">
+      <div class="marketing-nav">
+        <div class="brand"><div class="brand-mark" aria-hidden="true">&lt;/&gt;</div><strong>gamb-php-serve</strong></div>
+        <nav class="marketing-links"><a href="./index.html">Apresentacao</a><a href="./comandos.md">Comandos</a><a href="./auditoria-seguranca.md">Seguranca</a></nav>
+        <a href="https://github.com/gamberine/gamb-php-serve" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+      <header class="hero-copy manual-hero"><span class="hero-kicker">Manual do produto</span><h1>Trabalhe localmente com clareza e controle.</h1><p>O Gamb PHP Serve organiza o caminho entre encontrar um projeto, iniciar PHP e banco, trabalhar no hub e encerrar a sessao sem depender de um painel paralelo.</p></header>
+      <div class="section-cards manual-grid">
+        <article class="feature-card"><h2>1. Instalar</h2><p>Use Git Bash e mantenha PHP CLI ou PHP portatil disponivel.</p><code>bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve/main/install.sh)"</code></article>
+        <article class="feature-card"><h2>2. Iniciar</h2><p>Entre na pasta do projeto. A URL e o hub sao dinamicos.</p><code>cd /d/ProjetosWeb/meu-projeto<br>gamb-php-serve</code></article>
+        <article class="feature-card"><h2>3. Descobrir</h2><p>Encontre projetos existentes sem editar os arquivos deles.</p><code>gamb-php-discover --root /d/ProjetosWeb --register</code></article>
+        <article class="feature-card"><h2>4. Banco local</h2><p>Inicie MySQL/MariaDB diretamente pelos binarios instalados.</p><code>gamb-php-db-check<br>gamb-php-db-start<br>gamb-php-db-shell --database minha_base</code></article>
+        <article class="feature-card"><h2>5. WordPress</h2><p>Copie uma instalacao local para um destino novo e gere configuracao.</p><code>gamb-php-wp-install --source /d/site --destination /d/novo-site --db-name novo_site</code></article>
+        <article class="feature-card"><h2>6. Movimentar</h2><p>Planeje antes de copiar. O dump do banco e opcional e revisavel.</p><code>gamb-php-wp-move --source /d/site --destination /d/novo-site</code></article>
+      </div>
+      <section class="feature-card manual-security"><h2>Seguranca por desenho</h2><ul><li>Loopback local em `127.0.0.1`.</li><li>Dashboard com acoes conhecidas e parametros escapados.</li><li>Extensao VS Code sem dependencias npm de runtime.</li><li>Senha do banco solicitada pelo cliente, sem argumento exposto.</li><li>Movimentacao WordPress em simulacao antes de qualquer copia.</li><li>Nenhuma publicacao remota ou sobrescrita implicita.</li></ul><a class="pill-link primary" href="./auditoria-seguranca.md">Ler auditoria completa</a></section>
+      <section class="feature-card manual-next"><h2>Proximos blocos</h2><p>Instalador WordPress completo, migracao assistida para servidor, integracao executavel com `gamb-duplica-wp` e editor visual de tabelas. Cada item exige origem, destino, credenciais e politica de sobrescrita definidos antes da execucao.</p></section>
+      <div class="donation-line">Pix para melhorias: <a href="mailto:gamberine@gmail.com">gamberine@gmail.com</a></div>
+    </section></div></main>
+  </body>
+</html>

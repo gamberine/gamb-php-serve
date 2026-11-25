@@ -1,4 +1,18 @@
-# Gamberine PHP serve 
+# gamb-php-serve
+
+> Seu ambiente PHP local, organizado, seguro e pronto para trabalhar.
+
+O `gamb-php-serve` transforma o computador de desenvolvimento em um centro de operacoes para projetos PHP, WordPress e Laravel. Ele registra projetos locais, descobre instalacoes existentes, inicia PHP e MySQL/MariaDB diretamente pelos binarios instalados e oferece um hub visual para executar as acoes do dia a dia.
+
+## Produto
+
+- **Praticidade:** um comando inicia o projeto, abre o painel e mostra a URL correta.
+- **Seguranca:** o servico escuta no loopback, nao altera o codigo do projeto e evita comandos livres no painel e na extensao.
+- **Independencia:** Laragon, WAMP ou XAMPP podem continuar instalados, mas nao precisam ficar abertos em paralelo.
+- **Visibilidade:** projetos, portas, processos, logs e bancos aparecem em um catalogo local.
+- **Evolucao:** o mesmo nucleo atende Bash, CMD, PowerShell, VS Code e um contrato local para Antigravity.
+
+Leia o [manual do produto](docs/manual.md) ou abra a [apresentacao no GitHub Pages](https://gamberine.github.io/gamb-php-serve/).
 
 Ferramenta Bash global para rodar projetos PHP localmente sem Laragon, WAMP, XAMPP ou Apache externo.
 
@@ -68,6 +82,9 @@ Ao entrar novamente na pasta do projeto pelo Git Bash, o servidor sobe automatic
 - `gamb-php-db-status`
 - `gamb-php-db-start`
 - `gamb-php-db-stop`
+- `gamb-php-db-shell`
+- `gamb-php-wp-install`
+- `gamb-php-wp-move`
 
 ## Exemplos
 
@@ -246,3 +263,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/gamberine/gamb-php-serve
 - Não altera arquivos do projeto.
 - O modulo inicia automaticamente o banco local exigido por WordPress/Laravel e preserva bancos remotos.
 - Não deve ser usado em produção.
+
+## Roadmap seguro
+
+Os proximos blocos do produto sao o instalador WordPress completo, a movimentacao assistida para um servidor, a integracao executavel com `gamb-duplica-wp` e uma interface visual de tabelas. Esses fluxos nao sao acionados automaticamente: exigem origem, destino, credenciais e politica de sobrescrita definidos pelo operador.
